@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ダウンロード時間計算機</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌐</text></svg>">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* ライトモード */
+            --light-bg-primary: #ffffff;
+            --light-bg-secondary: #f5f5f5;
+            --light-bg-card: #ffffff;
+            --light-text-primary: #212121;
+            --light-text-secondary: #757575;
+            --light-border: #e0e0e0;
+            --light-shadow: rgba(0, 0, 0, 0.1);
+            
+            /* ダークモード */
+            --dark-bg-primary: #121212;
+            --dark-bg-secondary: #1e1e1e;
+            --dark-bg-card: #1e1e1e;
+            --dark-text-primary: #ffffff;
+            --dark-text-secondary: #b0b0b0;
+            --dark-border: #333333;
+            --dark-shadow: rgba(0, 0, 0, 0.3);
+            
+            /* ピュアダークモード */
+            --pure-dark-bg-primary: #000000;
+            --pure-dark-bg-secondary: #0a0a0a;
+            --pure-dark-bg-card: #0a0a0a;
+            --pure-dark-text-primary: #ffffff;
+            --pure-dark-text-secondary: #a0a0a0;
+            --pure-dark-border: #1a1a1a;
+            --pure-dark-shadow: rgba(0, 0, 0, 0.5);
+            
+            /* アクセントカラー */
+            --blue: #2196F3;
+            --blue-hover: #1976D2;
+            --blue-light: #E3F2FD;
+            --blue-dark: #1A237E;
+            
+            --green: #4CAF50;
+            --green-hover: #388E3C;
+            --green-light: #E8F5E9;
+            --green-dark: #1B5E20;
+            
+            --purple: #9C27B0;
+            --purple-hover: #7B1FA2;
+            --purple-light: #F3E5F5;
+            --purple-dark: #4A148C;
+            
+            --orange: #FF9800;
+            --orange-hover: #F57C00;
+            --orange-light: #FFF3E0;
+            --orange-dark: #E65100;
+            
+            --red: #F44336;
+            --red-hover: #D32F2F;
+            --red-light: #FFEBEE;
+            --red-dark: #B71C1C;
+            
+            --mono: #616161;
+            --mono-hover: #424242;
+            --mono-light: #F5F5F5;
+            --mono-dark: #212121;
+        }
+
+        body {
+            font-family: 'Roboto', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* ライトモード */
+        body[data-theme="light"] {
+            --bg-primary: var(--light-bg-primary);
+            --bg-secondary: var(--light-bg-secondary);
+            --bg-card: var(--light-bg-card);
+            --text-primary: var(--light-text-primary);
+            --text-secondary: var(--light-text-secondary);
+            --border: var(--light-border);
+            --shadow: var(--light-shadow);
+        }
+
+        /* ダークモード */
+        body[data-theme="dark"] {
+            --bg-primary: var(--dark-bg-primary);
+            --bg-secondary: var(--dark-bg-secondary);
+            --bg-card: var(--dark-bg-card);
+            --text-primary: var(--dark-text-primary);
+            --text-secondary: var(--dark-text-secondary);
+            --border: var(--dark-border);
+            --shadow: var(--dark-shadow);
+        }
+
+        /* ピュアダークモード */
+        body[data-theme="pure-dark"] {
+            --bg-primary: var(--pure-dark-bg-primary);
+            --bg-secondary: var(--pure-dark-bg-secondary);
+            --bg-card: var(--pure-dark-bg-card);
+            --text-primary: var(--pure-dark-text-primary);
+            --text-secondary: var(--pure-dark-text-secondary);
+            --border: var(--pure-dark-border);
+            --shadow: var(--pure-dark-shadow);
+        }
+
+        /* アクセントカラー - ブルー */
+        body[data-accent="blue"] {
+            --accent: var(--blue);
+            --accent-hover: var(--blue-hover);
+            --result-bg: var(--blue-light);
+            --result-text: var(--blue-dark);
+        }
+
+        body[data-theme="dark"][data-accent="blue"],
+        body[data-theme="pure-dark"][data-accent="blue"] {
+            --result-bg: var(--blue-dark);
+            --result-text: #90CAF9;
+        }
+
+        /* アクセントカラー - グリーン */
+        body[data-accent="green"] {
+            --accent: var(--green);
+            --accent-hover: var(--green-hover);
+            --result-bg: var(--green-light);
+            --result-text: var(--green-dark);
+        }
+
+        body[data-theme="dark"][data-accent="green"],
+        body[data-theme="pure-dark"][data-accent="green"] {
+            --result-bg: var(--green-dark);
+            --result-text: #A5D6A7;
+        }
+
+        /* アクセントカラー - パープル */
+        body[data-accent="purple"] {
+            --accent: var(--purple);
+            --accent-hover: var(--purple-hover);
+            --result-bg: var(--purple-light);
+            --result-text: var(--purple-dark);
+        }
+
+        body[data-theme="dark"][data-accent="purple"],
+        body[data-theme="pure-dark"][data-accent="purple"] {
+            --result-bg: var(--purple-dark);
+            --result-text: #CE93D8;
+        }
+
+        /* アクセントカラー - オレンジ */
+        body[data-accent="orange"] {
+            --accent: var(--orange);
+            --accent-hover: var(--orange-hover);
+            --result-bg: var(--orange-light);
+            --result-text: var(--orange-dark);
+        }
+
+        body[data-theme="dark"][data-accent="orange"],
+        body[data-theme="pure-dark"][data-accent="orange"] {
+            --result-bg: var(--orange-dark);
+            --result-text: #FFCC80;
+        }
+
+        /* アクセントカラー - レッド */
+        body[data-accent="red"] {
+            --accent: var(--red);
+            --accent-hover: var(--red-hover);
+            --result-bg: var(--red-light);
+            --result-text: var(--red-dark);
+        }
+
+        body[data-theme="dark"][data-accent="red"],
+        body[data-theme="pure-dark"][data-accent="red"] {
+            --result-bg: var(--red-dark);
+            --result-text: #EF9A9A;
+        }
+
+        /* アクセントカラー - モノクロ */
+        body[data-accent="mono"] {
+            --accent: var(--mono);
+            --accent-hover: var(--mono-hover);
+            --result-bg: var(--mono-light);
+            --result-text: var(--mono-dark);
+        }
+
+        body[data-theme="dark"][data-accent="mono"],
+        body[data-theme="pure-dark"][data-accent="mono"] {
+            --result-bg: #1a1a1a;
+            --result-text: #e0e0e0;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .card {
+            background-color: var(--bg-card);
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 4px 20px var(--shadow);
+            transition: background-color 0.3s ease;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 18px;
+            }
+        }
+
+        .top-right-controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 8px;
+            z-index: 100;
+        }
+
+        @media (max-width: 480px) {
+            .top-right-controls {
+                top: 10px;
+                right: 10px;
+                gap: 6px;
+            }
+        }
+
+        .lang-toggle {
+            display: flex;
+            gap: 3px;
+            background-color: var(--bg-card);
+            border-radius: 6px;
+            padding: 4px;
+            flex-shrink: 0;
+            box-shadow: 0 2px 8px var(--shadow);
+        }
+
+        @media (max-width: 480px) {
+            .lang-toggle {
+                padding: 3px;
+                gap: 2px;
+            }
+        }
+
+        .lang-btn {
+            background: none;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: all 0.2s ease;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        @media (max-width: 480px) {
+            .lang-btn {
+                padding: 3px 6px;
+                font-size: 10px;
+            }
+        }
+
+        .lang-btn:hover {
+            color: var(--text-primary);
+        }
+
+        .lang-btn.active {
+            background-color: var(--accent);
+            color: white;
+        }
+
+        .settings-btn {
+            background-color: var(--bg-card);
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 50%;
+            transition: background-color 0.2s ease;
+            flex-shrink: 0;
+            line-height: 1;
+            box-shadow: 0 2px 8px var(--shadow);
+        }
+
+        @media (max-width: 480px) {
+            .settings-btn {
+                font-size: 16px;
+                padding: 5px;
+            }
+        }
+
+        .settings-btn:hover {
+            background-color: var(--bg-secondary);
+        }
+
+        .form-group {
+            margin-bottom: 28px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 12px;
+        }
+
+        .size-display {
+            margin-top: 8px;
+            font-size: 14px;
+            color: var(--text-secondary);
+            min-height: 20px;
+        }
+
+        input[type="number"] {
+            flex: 1;
+            padding: 14px 16px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 16px;
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            transition: all 0.2s ease;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: var(--accent);
+            background-color: var(--bg-card);
+        }
+
+        select {
+            padding: 14px 16px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 16px;
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            min-width: 120px;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: var(--accent);
+            background-color: var(--bg-card);
+        }
+
+        .calculate-btn {
+            width: 100%;
+            padding: 16px;
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            box-shadow: 0 2px 8px rgba(33, 150, 243, 0.3);
+        }
+
+        .calculate-btn:hover {
+            background-color: var(--accent-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(33, 150, 243, 0.4);
+        }
+
+        .calculate-btn:active {
+            transform: translateY(0);
+        }
+
+        .result {
+            margin-top: 32px;
+            padding: 24px;
+            background-color: var(--result-bg);
+            border-radius: 12px;
+            display: none;
+        }
+
+        .result.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result h2 {
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 16px;
+            color: var(--result-text);
+        }
+
+        .result-value {
+            font-size: 32px;
+            font-weight: 500;
+            color: var(--result-text);
+            margin-bottom: 8px;
+        }
+
+        .result-detail {
+            font-size: 16px;
+            color: var(--result-text);
+            opacity: 0.8;
+        }
+
+        /* 設定モーダル */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background-color: var(--bg-card);
+            border-radius: 16px;
+            padding: 32px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 8px 32px var(--shadow);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .modal-header h2 {
+            font-size: 24px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            padding: 0;
+            line-height: 1;
+        }
+
+        .close-btn:hover {
+            color: var(--text-primary);
+        }
+
+        .setting-section {
+            margin-bottom: 28px;
+        }
+
+        .setting-section h3 {
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+        }
+
+        .theme-options, .color-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 12px;
+        }
+
+        .option-btn {
+            padding: 12px 16px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .option-btn:hover {
+            border-color: var(--accent);
+        }
+
+        .option-btn.active {
+            background-color: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        .color-preview {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        .footer {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background-color: var(--bg-card);
+            padding: 8px 12px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px var(--shadow);
+        }
+
+        .footer a {
+            color: inherit;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .footer a:hover {
+            color: var(--accent);
+        }
+
+        .footer-dot {
+            width: 6px;
+            height: 6px;
+            background-color: var(--accent);
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        @media (max-width: 480px) {
+            .card {
+                padding: 24px;
+            }
+
+            .input-row {
+                flex-direction: column;
+            }
+
+            select {
+                width: 100%;
+            }
+
+            .result-value {
+                font-size: 28px;
+            }
+
+            .modal-content {
+                padding: 24px;
+            }
+
+            .theme-options, .color-options {
+                grid-template-columns: 1fr;
+            }
+
+            .footer {
+                bottom: 10px;
+                right: 10px;
+                font-size: 10px;
+                padding: 6px 10px;
+            }
+        }
+    </style>
+</head>
+<body data-theme="pure-dark" data-accent="mono">
+    <!-- 右上のコントロール -->
+    <div class="top-right-controls">
+        <div class="lang-toggle">
+            <button class="lang-btn active" data-lang="ja">JP</button>
+            <button class="lang-btn" data-lang="en">EN</button>
+        </div>
+        <button class="settings-btn" id="settingsBtn" aria-label="設定">⚙️</button>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <header>
+                <h1 id="pageTitle">ダウンロード時間計算</h1>
+            </header>
+
+            <form id="calculatorForm">
+                <div class="form-group">
+                    <label id="labelFileSize">ファイルサイズ</label>
+                    <div class="input-row">
+                        <input type="number" id="fileSize" min="0" step="0.01" placeholder="容量を入力" required>
+                        <select id="sizeUnit">
+                            <option value="MB">MB</option>
+                            <option value="GB" selected>GB</option>
+                            <option value="TB">TB</option>
+                        </select>
+                    </div>
+                    <div class="size-display" id="sizeDisplay"></div>
+                </div>
+
+                <div class="form-group">
+                    <label id="labelSpeed">回線速度</label>
+                    <div class="input-row">
+                        <input type="number" id="speed" min="0" step="0.1" placeholder="速度を入力" required>
+                        <select id="speedUnit">
+                            <option value="Kbps">Kbps</option>
+                            <option value="Mbps" selected>Mbps</option>
+                            <option value="Gbps">Gbps</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit" class="calculate-btn" id="calculateBtn">計算する</button>
+            </form>
+
+            <div class="result" id="result">
+                <h2 id="resultTitle">ダウンロード時間</h2>
+                <div class="result-value" id="resultValue">-</div>
+                <div class="result-detail" id="resultDetail">-</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <span>By <span class="footer-dot"></span><a href="https://www.instagram.com/ryo0.jpg/" target="_blank" rel="noopener noreferrer">Ryo</a> based in Japan</span>
+        <span id="jstTime"></span>
+    </div>
+
+    <!-- 設定モーダル -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="settingsTitle">設定</h2>
+                <button class="close-btn" id="closeModal">&times;</button>
+            </div>
+
+            <div class="setting-section">
+                <h3 id="themeTitle">テーマ</h3>
+                <div class="theme-options">
+                    <button class="option-btn" data-theme="light"><span class="theme-text-light">☀️ ライト</span><span class="theme-text-en" style="display:none;">☀️ Light</span></button>
+                    <button class="option-btn" data-theme="pure-dark"><span class="theme-text-dark">⚫ ダーク</span><span class="theme-text-en" style="display:none;">⚫ Dark</span></button>
+                    <button class="option-btn" data-theme="dark"><span class="theme-text-gray">🌙 グレー</span><span class="theme-text-en" style="display:none;">🌙 Gray Dark</span></button>
+                </div>
+            </div>
+
+            <div class="setting-section">
+                <h3 id="colorTitle">アクセントカラー</h3>
+                <div class="color-options">
+                    <button class="option-btn" data-color="blue">
+                        <span class="color-preview" style="background-color: #2196F3;"></span><span class="color-text-blue">ブルー</span><span class="color-text-en" style="display:none;">Blue</span>
+                    </button>
+                    <button class="option-btn" data-color="green">
+                        <span class="color-preview" style="background-color: #4CAF50;"></span><span class="color-text-green">グリーン</span><span class="color-text-en" style="display:none;">Green</span>
+                    </button>
+                    <button class="option-btn" data-color="purple">
+                        <span class="color-preview" style="background-color: #9C27B0;"></span><span class="color-text-purple">パープル</span><span class="color-text-en" style="display:none;">Purple</span>
+                    </button>
+                    <button class="option-btn" data-color="orange">
+                        <span class="color-preview" style="background-color: #FF9800;"></span><span class="color-text-orange">オレンジ</span><span class="color-text-en" style="display:none;">Orange</span>
+                    </button>
+                    <button class="option-btn" data-color="red">
+                        <span class="color-preview" style="background-color: #F44336;"></span><span class="color-text-red">レッド</span><span class="color-text-en" style="display:none;">Red</span>
+                    </button>
+                    <button class="option-btn" data-color="mono">
+                        <span class="color-preview" style="background: linear-gradient(to right, #424242, #e0e0e0);"></span><span class="color-text-mono">モノクロ</span><span class="color-text-en" style="display:none;">Mono</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 翻訳データ
+        const translations = {
+            ja: {
+                pageTitle: 'ダウンロード時間計算',
+                labelFileSize: 'ファイルサイズ',
+                labelSpeed: '回線速度',
+                placeholderSize: '容量を入力',
+                placeholderSpeed: '速度を入力',
+                calculateBtn: '計算する',
+                resultTitle: 'ダウンロード時間',
+                settingsTitle: '設定',
+                themeTitle: 'テーマ',
+                colorTitle: 'アクセントカラー',
+                alertInvalid: '正しい値を入力してください',
+                total: '合計',
+                lessThan1sec: '1秒未満',
+                about: '約',
+                day: '日',
+                hour: '時間',
+                minute: '分',
+                second: '秒'
+            },
+            en: {
+                pageTitle: 'Download Time Calculator',
+                labelFileSize: 'File Size',
+                labelSpeed: 'Connection Speed',
+                placeholderSize: 'Enter size',
+                placeholderSpeed: 'Enter speed',
+                calculateBtn: 'Calculate',
+                resultTitle: 'Download Time',
+                settingsTitle: 'Settings',
+                themeTitle: 'Theme',
+                colorTitle: 'Accent Color',
+                alertInvalid: 'Please enter valid values',
+                total: 'Total',
+                lessThan1sec: 'Less than 1 second',
+                about: 'About',
+                day: 'd',
+                hour: 'h',
+                minute: 'm',
+                second: 's'
+            }
+        };
+
+        let currentLang = getCookie('lang') || 'ja';
+
+        function updateLanguage(lang) {
+            currentLang = lang;
+            const t = translations[lang];
+
+            document.getElementById('pageTitle').textContent = t.pageTitle;
+            document.getElementById('labelFileSize').textContent = t.labelFileSize;
+            document.getElementById('labelSpeed').textContent = t.labelSpeed;
+            document.getElementById('fileSize').placeholder = t.placeholderSize;
+            document.getElementById('speed').placeholder = t.placeholderSpeed;
+            document.getElementById('calculateBtn').textContent = t.calculateBtn;
+            document.getElementById('resultTitle').textContent = t.resultTitle;
+            document.getElementById('settingsTitle').textContent = t.settingsTitle;
+            document.getElementById('themeTitle').textContent = t.themeTitle;
+            document.getElementById('colorTitle').textContent = t.colorTitle;
+
+            // 言語ボタンのアクティブ状態更新
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+            });
+
+            // 設定モーダル内のテキスト切り替え
+            if (lang === 'en') {
+                document.querySelectorAll('.theme-text-light, .theme-text-dark, .theme-text-gray').forEach(el => el.style.display = 'none');
+                document.querySelectorAll('.color-text-blue, .color-text-green, .color-text-purple, .color-text-orange, .color-text-red, .color-text-mono').forEach(el => el.style.display = 'none');
+                document.querySelectorAll('.theme-text-en, .color-text-en').forEach(el => el.style.display = 'inline');
+            } else {
+                document.querySelectorAll('.theme-text-light, .theme-text-dark, .theme-text-gray').forEach(el => el.style.display = 'inline');
+                document.querySelectorAll('.color-text-blue, .color-text-green, .color-text-purple, .color-text-orange, .color-text-red, .color-text-mono').forEach(el => el.style.display = 'inline');
+                document.querySelectorAll('.theme-text-en, .color-text-en').forEach(el => el.style.display = 'none');
+            }
+
+            setCookie('lang', lang);
+        }
+
+        // 言語切り替えボタン
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const lang = btn.getAttribute('data-lang');
+                updateLanguage(lang);
+                // ファイルサイズ表示を更新
+                updateSizeDisplay();
+            });
+        });
+
+        // 初期言語設定
+        updateLanguage(currentLang);
+
+        // Cookie管理関数
+        function setCookie(name, value, days = 365) {
+            const date = new Date();
+            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+            const expires = "expires=" + date.toUTCString();
+            document.cookie = name + "=" + value + ";" + expires + ";path=/";
+        }
+
+        function getCookie(name) {
+            const nameEQ = name + "=";
+            const ca = document.cookie.split(';');
+            for (let i = 0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+                if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+            }
+            return null;
+        }
+
+        // 設定の初期化
+        const body = document.body;
+        const settingsBtn = document.getElementById('settingsBtn');
+        const settingsModal = document.getElementById('settingsModal');
+        const closeModal = document.getElementById('closeModal');
+
+        // 保存されたテーマとカラーを読み込み
+        const savedTheme = getCookie('theme') || 
+                          (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'pure-dark' : 'light');
+        const savedAccent = getCookie('accent') || 'mono';
+
+        body.setAttribute('data-theme', savedTheme);
+        body.setAttribute('data-accent', savedAccent);
+
+        // 設定モーダルの表示/非表示
+        settingsBtn.addEventListener('click', () => {
+            settingsModal.classList.add('show');
+            updateActiveButtons();
+        });
+
+        closeModal.addEventListener('click', () => {
+            settingsModal.classList.remove('show');
+        });
+
+        settingsModal.addEventListener('click', (e) => {
+            if (e.target === settingsModal) {
+                settingsModal.classList.remove('show');
+            }
+        });
+
+        // アクティブなボタンを更新
+        function updateActiveButtons() {
+            const currentTheme = body.getAttribute('data-theme');
+            const currentAccent = body.getAttribute('data-accent');
+
+            document.querySelectorAll('.option-btn[data-theme]').forEach(btn => {
+                btn.classList.toggle('active', btn.getAttribute('data-theme') === currentTheme);
+            });
+
+            document.querySelectorAll('.option-btn[data-color]').forEach(btn => {
+                btn.classList.toggle('active', btn.getAttribute('data-color') === currentAccent);
+            });
+        }
+
+        // テーマ変更
+        document.querySelectorAll('.option-btn[data-theme]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const theme = btn.getAttribute('data-theme');
+                body.setAttribute('data-theme', theme);
+                setCookie('theme', theme);
+                updateActiveButtons();
+            });
+        });
+
+        // アクセントカラー変更
+        document.querySelectorAll('.option-btn[data-color]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const color = btn.getAttribute('data-color');
+                body.setAttribute('data-accent', color);
+                setCookie('accent', color);
+                updateActiveButtons();
+            });
+        });
+
+        // システムテーマの変更を監視
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+            if (!getCookie('theme')) {
+                const newTheme = e.matches ? 'pure-dark' : 'light';
+                body.setAttribute('data-theme', newTheme);
+            }
+        });
+
+        // ファイルサイズの表示更新
+        const fileSizeInput = document.getElementById('fileSize');
+        const sizeUnitSelect = document.getElementById('sizeUnit');
+        const sizeDisplay = document.getElementById('sizeDisplay');
+
+        function updateSizeDisplay() {
+            const size = parseFloat(fileSizeInput.value);
+            const unit = sizeUnitSelect.value;
+
+            if (!size || size <= 0) {
+                sizeDisplay.textContent = '';
+                return;
+            }
+
+            let displays = [];
+
+            if (unit === 'TB') {
+                const gb = size * 1024;
+                const mb = gb * 1024;
+                displays.push(`= ${gb.toLocaleString('ja-JP', {maximumFractionDigits: 2})} GB`);
+                displays.push(`= ${mb.toLocaleString('ja-JP', {maximumFractionDigits: 0})} MB`);
+            } else if (unit === 'GB') {
+                const tb = size / 1024;
+                const mb = size * 1024;
+                if (tb >= 0.001) {
+                    displays.push(`= ${tb.toLocaleString('ja-JP', {maximumFractionDigits: 3})} TB`);
+                }
+                displays.push(`= ${mb.toLocaleString('ja-JP', {maximumFractionDigits: 0})} MB`);
+            } else if (unit === 'MB') {
+                const gb = size / 1024;
+                const tb = gb / 1024;
+                if (tb >= 0.001) {
+                    displays.push(`= ${tb.toLocaleString('ja-JP', {maximumFractionDigits: 3})} TB`);
+                }
+                if (gb >= 0.001) {
+                    displays.push(`= ${gb.toLocaleString('ja-JP', {maximumFractionDigits: 3})} GB`);
+                }
+            }
+
+            sizeDisplay.textContent = displays.join(' ');
+        }
+
+        fileSizeInput.addEventListener('input', updateSizeDisplay);
+        sizeUnitSelect.addEventListener('change', updateSizeDisplay);
+
+        // JST時刻の更新
+        function updateJSTTime() {
+            const now = new Date();
+            const jstTime = new Intl.DateTimeFormat('ja-JP', {
+                timeZone: 'Asia/Tokyo',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+            }).format(now);
+            document.getElementById('jstTime').textContent = `JST ${jstTime}`;
+        }
+
+        updateJSTTime();
+        setInterval(updateJSTTime, 1000);
+
+        // 計算処理
+        const form = document.getElementById('calculatorForm');
+        const result = document.getElementById('result');
+        const resultValue = document.getElementById('resultValue');
+        const resultDetail = document.getElementById('resultDetail');
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            calculateDownloadTime();
+        });
+
+        function calculateDownloadTime() {
+            const fileSize = parseFloat(document.getElementById('fileSize').value);
+            const sizeUnit = document.getElementById('sizeUnit').value;
+            const speed = parseFloat(document.getElementById('speed').value);
+            const speedUnit = document.getElementById('speedUnit').value;
+
+            if (!fileSize || fileSize <= 0 || !speed || speed <= 0) {
+                alert(translations[currentLang].alertInvalid);
+                return;
+            }
+
+            // すべてをメガバイトに変換
+            let fileSizeInMB;
+            switch (sizeUnit) {
+                case 'MB':
+                    fileSizeInMB = fileSize;
+                    break;
+                case 'GB':
+                    fileSizeInMB = fileSize * 1024;
+                    break;
+                case 'TB':
+                    fileSizeInMB = fileSize * 1024 * 1024;
+                    break;
+            }
+
+            // 速度をMbpsに変換
+            let speedInMbps;
+            switch (speedUnit) {
+                case 'Kbps':
+                    speedInMbps = speed / 1024;
+                    break;
+                case 'Mbps':
+                    speedInMbps = speed;
+                    break;
+                case 'Gbps':
+                    speedInMbps = speed * 1024;
+                    break;
+            }
+
+            // MbpsをMB/sに変換 (1 Mbps = 0.125 MB/s)
+            const speedInMBps = speedInMbps / 8;
+
+            // ダウンロード時間を秒で計算
+            const timeInSeconds = fileSizeInMB / speedInMBps;
+
+            // 結果を表示
+            displayResult(timeInSeconds);
+            result.classList.add('show');
+        }
+
+        function displayResult(totalSeconds) {
+            const t = translations[currentLang];
+            const days = Math.floor(totalSeconds / 86400);
+            const hours = Math.floor((totalSeconds % 86400) / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = Math.floor(totalSeconds % 60);
+
+            let mainDisplay = '';
+            let detailDisplay = '';
+
+            if (days > 0) {
+                mainDisplay = `${days}${t.day} ${hours}${t.hour}`;
+                detailDisplay = `${days}${t.day} ${hours}${t.hour} ${minutes}${t.minute} ${seconds}${t.second}`;
+            } else if (hours > 0) {
+                mainDisplay = `${hours}${t.hour} ${minutes}${t.minute}`;
+                detailDisplay = `${hours}${t.hour} ${minutes}${t.minute} ${seconds}${t.second}`;
+            } else if (minutes > 0) {
+                mainDisplay = `${minutes}${t.minute} ${seconds}${t.second}`;
+                detailDisplay = `${t.total}: ${Math.floor(totalSeconds)}${t.second}`;
+            } else {
+                mainDisplay = `${seconds}${t.second}`;
+                detailDisplay = totalSeconds < 1 ? t.lessThan1sec : `${t.about}${seconds}${t.second}`;
+            }
+
+            resultValue.textContent = mainDisplay;
+            resultDetail.textContent = detailDisplay;
+        }
+    </script>
+</body>
+</html>
