@@ -1,0 +1,28 @@
+{
+  "name": "ダウンロード時間計算",
+  "short_name": "DL時間計算",
+  "description": "シンプルなダウンロード計算機。ファイルサイズと回線速度で即座にダウンロード時間を計算します。",
+  "start_url": "/download_time_calc/",
+  "display": "standalone",
+  "background_color": "#1a1a1a",
+  "theme_color": "#424242",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "images/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["utilities", "productivity"],
+  "lang": "ja",
+  "dir": "ltr"
+}
+

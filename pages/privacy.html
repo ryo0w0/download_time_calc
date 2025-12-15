@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>プライバシーポリシー - ダウンロード時間計算</title>
+    <meta name="description" content="ダウンロード時間計算アプリのプライバシーポリシー">
+    <meta name="theme-color" content="#424242">
+    <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="../images/apple-touch-icon.png">
+    <link rel="manifest" href="../manifest.json">
+    <link rel="stylesheet" href="../css/style.css">
+
+    <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-EJ1DN1T33S"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-EJ1DN1T33S');
+</script>
+
+</head>
+<body data-theme="dark" data-accent="mono">
+    <!-- 左下のトップページリンク -->
+    <a href="../index.html" class="privacy-link-bottom-left" id="backToHomeLink">トップページ</a>
+
+    <!-- 右上のコントロール -->
+    <div class="top-right-controls">
+        <div class="lang-toggle">
+            <button class="lang-btn active" data-lang="ja">JP</button>
+            <button class="lang-btn" data-lang="en">EN</button>
+        </div>
+        <button class="settings-btn" id="settingsBtn" aria-label="設定">⚙️</button>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <!-- 閉じるボタン（レスポンシブ） -->
+            <button class="floating-close-btn" id="floatingCloseBtn" aria-label="閉じる">✕</button>
+            <header>
+                <h1 id="pageTitle">プライバシーポリシー</h1>
+            </header>
+
+            <div class="privacy-content">
+                <section>
+                    <h2 id="section1Title">1. はじめに</h2>
+                    <p id="section1Text">本プライバシーポリシーは、ダウンロード時間計算アプリ（以下「本アプリ」）における個人情報の取り扱いについて説明するものです。本アプリをご利用いただくことで、本プライバシーポリシーに同意したものとみなされます。</p>
+                </section>
+
+                <section>
+                    <h2 id="section2Title">2. 収集する情報</h2>
+                    <p id="section2Text">本アプリは、以下の情報を収集する場合があります：</p>
+                    <ul>
+                        <li id="section2Item1">計算履歴（ブラウザのローカルストレージに保存）</li>
+                        <li id="section2Item2">設定情報（テーマ、言語設定など）</li>
+                        <li id="section2Item3">Google Analyticsによるアクセス解析データ</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2 id="section3Title">3. 情報の利用目的</h2>
+                    <p id="section3Text">収集した情報は、以下の目的で利用します：</p>
+                    <ul>
+                        <li id="section3Item1">アプリの機能提供（計算履歴の保存、設定の保持）</li>
+                        <li id="section3Item2">サービスの改善と分析</li>
+                        <li id="section3Item3">ユーザー体験の向上</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2 id="section4Title">4. 情報の保存と管理</h2>
+                    <p id="section4Text">計算履歴と設定情報は、お使いのブラウザのローカルストレージに保存されます。これらの情報は、お使いのデバイス上にのみ保存され、外部のサーバーに送信されることはありません。</p>
+                </section>
+
+                <section>
+                    <h2 id="section5Title">5. Google Analyticsについて</h2>
+                    <p id="section5Text">本アプリは、Google Analyticsを使用してアクセス解析を行っています。Google Analyticsは、Cookieを使用して匿名のトラフィックデータを収集します。このデータは、Googleのプライバシーポリシーに従って管理されます。</p>
+                </section>
+
+                <section>
+                    <h2 id="section6Title">6. 情報の共有</h2>
+                    <p id="section6Text">本アプリは、お客様の個人情報を第三者と共有することはありません。ただし、法律により開示が義務付けられている場合を除きます。</p>
+                </section>
+
+                <section>
+                    <h2 id="section7Title">7. プライバシーポリシーの変更</h2>
+                    <p id="section7Text">本プライバシーポリシーは、予告なく変更される場合があります。変更後のプライバシーポリシーは、本ページに掲載された時点で効力を生じます。</p>
+                </section>
+
+                <section>
+                    <h2 id="section8Title">8. お問い合わせ</h2>
+                    <p id="section8Text">プライバシーポリシーに関するご質問やご意見がございましたら、<a href="https://www.instagram.com/ryo0.jpg/" target="_blank" rel="noopener noreferrer">Instagram</a>までご連絡ください。</p>
+                </section>
+
+                <section>
+                    <p id="lastUpdated">最終更新日: 2024年1月1日</p>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <span>By <span class="footer-dot"></span><a href="https://www.instagram.com/ryo0.jpg/" target="_blank" rel="noopener noreferrer">Ryo</a> based in Japan</span>
+        <span id="jstTime"></span>
+    </div>
+
+    <!-- 設定モーダル -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="settingsTitle">設定</h2>
+                <button class="close-btn" id="closeModal">&times;</button>
+            </div>
+
+            <div class="setting-section">
+                <h3 id="themeTitle">テーマ</h3>
+                <div class="theme-options">
+                    <button class="option-btn" data-theme="light"><span class="theme-text-light">☀️ ライト</span><span class="theme-text-en" style="display:none;">☀️ Light</span></button>
+                    <button class="option-btn" data-theme="pure-dark"><span class="theme-text-dark">⚫ ダーク</span><span class="theme-text-en" style="display:none;">⚫ Dark</span></button>
+                    <button class="option-btn" data-theme="dark"><span class="theme-text-gray">🌙 グレー</span><span class="theme-text-en" style="display:none;">🌙 Gray Dark</span></button>
+                </div>
+            </div>
+
+            <div class="setting-section">
+                <h3 id="colorTitle">アクセントカラー</h3>
+                <div class="color-options">
+                    <button class="option-btn" data-color="mono">
+                        <span class="color-preview" style="background: linear-gradient(to right, #424242, #e0e0e0);"></span><span class="color-text-mono">モノクロ</span><span class="color-text-en" style="display:none;">Mono</span>
+                    </button>
+                    <button class="option-btn" data-color="blue">
+                        <span class="color-preview" style="background-color: #2196F3;"></span><span class="color-text-blue">ブルー</span><span class="color-text-en" style="display:none;">Blue</span>
+                    </button>
+                    <button class="option-btn" data-color="green">
+                        <span class="color-preview" style="background-color: #4CAF50;"></span><span class="color-text-green">グリーン</span><span class="color-text-en" style="display:none;">Green</span>
+                    </button>
+                    <button class="option-btn" data-color="purple">
+                        <span class="color-preview" style="background-color: #9C27B0;"></span><span class="color-text-purple">パープル</span><span class="color-text-en" style="display:none;">Purple</span>
+                    </button>
+                    <div class="color-options-expandable" id="colorOptionsExpandable">
+                        <button class="option-btn" data-color="orange">
+                            <span class="color-preview" style="background-color: #FF9800;"></span><span class="color-text-orange">オレンジ</span><span class="color-text-en" style="display:none;">Orange</span>
+                        </button>
+                        <button class="option-btn" data-color="red">
+                            <span class="color-preview" style="background-color: #F44336;"></span><span class="color-text-red">レッド</span><span class="color-text-en" style="display:none;">Red</span>
+                        </button>
+                        <button class="option-btn" data-color="pink">
+                            <span class="color-preview" style="background-color: #E91E63;"></span><span class="color-text-pink">ピンク</span><span class="color-text-en" style="display:none;">Pink</span>
+                        </button>
+                        <button class="option-btn" data-color="pastel-blue">
+                            <span class="color-preview" style="background-color: #A8D5E2;"></span><span class="color-text-pastel-blue">シアン</span><span class="color-text-en" style="display:none;">Cyan</span>
+                        </button>
+                        <button class="option-btn" data-color="pastel-green">
+                            <span class="color-preview" style="background-color: #B5E5CF;"></span><span class="color-text-pastel-green">ミント</span><span class="color-text-en" style="display:none;">Mint</span>
+                        </button>
+                        <button class="option-btn" data-color="pastel-yellow">
+                            <span class="color-preview" style="background-color: #FFE5B4;"></span><span class="color-text-pastel-yellow">レモン</span><span class="color-text-en" style="display:none;">Lemon</span>
+                        </button>
+                        <button class="option-btn" data-color="pastel-pink">
+                            <span class="color-preview" style="background-color: #FFD1DC;"></span><span class="color-text-pastel-pink">ローズ</span><span class="color-text-en" style="display:none;">Rose</span>
+                        </button>
+                    </div>
+                    <button class="expand-btn" id="expandColorsBtn" style="display: none;">
+                        <span class="expand-text-ja">もっと見る</span><span class="expand-text-en" style="display:none;">Show More</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="setting-section">
+                <h3 id="sizeUnitTitle">ファイルサイズ単位</h3>
+                <div class="theme-options">
+                    <button class="option-btn" data-size-unit="1000">
+                        <span class="size-unit-text-1000">1GB = 1000MB</span><span class="size-unit-text-en" style="display:none;">1GB = 1000MB</span>
+                    </button>
+                    <button class="option-btn" data-size-unit="1024">
+                        <span class="size-unit-text-1024">1GB = 1024MB</span><span class="size-unit-text-en" style="display:none;">1GB = 1024MB</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="setting-section">
+                <div class="toggle-setting">
+                    <label for="historyToggle" id="historyToggleLabel">履歴機能</label>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="historyToggle" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <div style="margin-top: 24px; display: flex; justify-content: center;">
+                <button class="save-btn" id="saveSettings" style="width: 100%;"><span id="saveBtnText">閉じる</span><span id="saveBtnTextEn" style="display:none;">Close</span></button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/main.js"></script>
+    <script>
+        // Service Workerの登録
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/download_time_calc/js/service-worker.js')
+                    .then((registration) => {
+                        console.log('ServiceWorker registration successful:', registration.scope);
+                    })
+                    .catch((error) => {
+                        console.log('ServiceWorker registration failed:', error);
+                    });
+            });
+        }
+
+        // プライバシーポリシーページ用の翻訳データ
+        let privacyTranslations = {};
+        let currentLang = getCookie('lang') || 'ja';
+
+        async function loadPrivacyTranslations() {
+            try {
+                const [jaData, enData] = await Promise.all([
+                    fetch('../data/ja.json').then(res => res.json()),
+                    fetch('../data/en.json').then(res => res.json())
+                ]);
+                privacyTranslations = {
+                    ja: jaData,
+                    en: enData
+                };
+                updatePrivacyLanguage(currentLang);
+                return Promise.resolve();
+            } catch (error) {
+                console.error('翻訳データの読み込みに失敗しました:', error);
+                return Promise.reject(error);
+            }
+        }
+
+        function updatePrivacyLanguage(lang) {
+            currentLang = lang;
+            if (!privacyTranslations[lang]) return;
+
+            const t = privacyTranslations[lang];
+            
+            // タイトルを更新
+            const pageTitle = document.getElementById('pageTitle');
+            if (pageTitle) pageTitle.textContent = t.privacyPolicyTitle;
+            
+            const backToHome = document.getElementById('backToHome');
+            if (backToHome) backToHome.textContent = t.backToHome;
+            
+            // セクションタイトルとテキストを更新
+            const section1Title = document.getElementById('section1Title');
+            if (section1Title) section1Title.textContent = t.section1Title;
+            const section1Text = document.getElementById('section1Text');
+            if (section1Text) section1Text.textContent = t.section1Text;
+            
+            const section2Title = document.getElementById('section2Title');
+            if (section2Title) section2Title.textContent = t.section2Title;
+            const section2Text = document.getElementById('section2Text');
+            if (section2Text) section2Text.textContent = t.section2Text;
+            const section2Item1 = document.getElementById('section2Item1');
+            if (section2Item1) section2Item1.textContent = t.section2Item1;
+            const section2Item2 = document.getElementById('section2Item2');
+            if (section2Item2) section2Item2.textContent = t.section2Item2;
+            const section2Item3 = document.getElementById('section2Item3');
+            if (section2Item3) section2Item3.textContent = t.section2Item3;
+            
+            const section3Title = document.getElementById('section3Title');
+            if (section3Title) section3Title.textContent = t.section3Title;
+            const section3Text = document.getElementById('section3Text');
+            if (section3Text) section3Text.textContent = t.section3Text;
+            const section3Item1 = document.getElementById('section3Item1');
+            if (section3Item1) section3Item1.textContent = t.section3Item1;
+            const section3Item2 = document.getElementById('section3Item2');
+            if (section3Item2) section3Item2.textContent = t.section3Item2;
+            const section3Item3 = document.getElementById('section3Item3');
+            if (section3Item3) section3Item3.textContent = t.section3Item3;
+            
+            const section4Title = document.getElementById('section4Title');
+            if (section4Title) section4Title.textContent = t.section4Title;
+            const section4Text = document.getElementById('section4Text');
+            if (section4Text) section4Text.textContent = t.section4Text;
+            
+            const section5Title = document.getElementById('section5Title');
+            if (section5Title) section5Title.textContent = t.section5Title;
+            const section5Text = document.getElementById('section5Text');
+            if (section5Text) section5Text.textContent = t.section5Text;
+            
+            const section6Title = document.getElementById('section6Title');
+            if (section6Title) section6Title.textContent = t.section6Title;
+            const section6Text = document.getElementById('section6Text');
+            if (section6Text) section6Text.textContent = t.section6Text;
+            
+            const section7Title = document.getElementById('section7Title');
+            if (section7Title) section7Title.textContent = t.section7Title;
+            const section7Text = document.getElementById('section7Text');
+            if (section7Text) section7Text.textContent = t.section7Text;
+            
+            const section8Title = document.getElementById('section8Title');
+            if (section8Title) section8Title.textContent = t.section8Title;
+            const section8Text = document.getElementById('section8Text');
+            if (section8Text) section8Text.textContent = t.section8Text;
+            
+            const lastUpdated = document.getElementById('lastUpdated');
+            if (lastUpdated) lastUpdated.textContent = t.lastUpdated;
+            
+            // 設定モーダルのテキストも更新
+            const settingsTitle = document.getElementById('settingsTitle');
+            if (settingsTitle) settingsTitle.textContent = t.settingsTitle;
+            const themeTitle = document.getElementById('themeTitle');
+            if (themeTitle) themeTitle.textContent = t.themeTitle;
+            const colorTitle = document.getElementById('colorTitle');
+            if (colorTitle) colorTitle.textContent = t.colorTitle;
+            const sizeUnitTitle = document.getElementById('sizeUnitTitle');
+            if (sizeUnitTitle) sizeUnitTitle.textContent = t.sizeUnitTitle;
+            const historyToggleLabel = document.getElementById('historyToggleLabel');
+            if (historyToggleLabel) historyToggleLabel.textContent = t.historyToggleLabel;
+            const saveBtnText = document.getElementById('saveBtnText');
+            if (saveBtnText) saveBtnText.textContent = t.saveBtn;
+            const saveBtnTextEn = document.getElementById('saveBtnTextEn');
+            if (saveBtnTextEn) saveBtnTextEn.textContent = t.saveBtn;
+            
+            // タイトルを更新
+            document.title = t.privacyPolicyTitle + ' - ' + (lang === 'en' ? 'Download Time Calculator' : 'ダウンロード時間計算');
+            
+            // 設定モーダル内のテキスト切り替え
+            if (lang === 'en') {
+                document.querySelectorAll('.theme-text-light, .theme-text-dark, .theme-text-gray').forEach(el => el.style.display = 'none');
+                document.querySelectorAll('.color-text-blue, .color-text-green, .color-text-purple, .color-text-orange, .color-text-red, .color-text-mono, .color-text-pastel-blue, .color-text-pastel-green, .color-text-pastel-yellow, .color-text-pastel-pink, .color-text-pink').forEach(el => el.style.display = 'none');
+                document.querySelectorAll('.theme-text-en, .color-text-en').forEach(el => el.style.display = 'inline');
+                document.querySelectorAll('.expand-text-ja').forEach(el => el.style.display = 'none');
+                document.querySelectorAll('.expand-text-en').forEach(el => el.style.display = 'inline');
+                document.querySelectorAll('.size-unit-text-1000, .size-unit-text-1024').forEach(el => el.style.display = 'none');
+                document.querySelectorAll('.size-unit-text-en').forEach(el => el.style.display = 'inline');
+            } else {
+                document.querySelectorAll('.theme-text-light, .theme-text-dark, .theme-text-gray').forEach(el => el.style.display = 'inline');
+                document.querySelectorAll('.color-text-blue, .color-text-green, .color-text-purple, .color-text-orange, .color-text-red, .color-text-mono, .color-text-pastel-blue, .color-text-pastel-green, .color-text-pastel-yellow, .color-text-pastel-pink, .color-text-pink').forEach(el => el.style.display = 'inline');
+                document.querySelectorAll('.theme-text-en, .color-text-en').forEach(el => el.style.display = 'none');
+                document.querySelectorAll('.expand-text-ja').forEach(el => el.style.display = 'inline');
+                document.querySelectorAll('.expand-text-en').forEach(el => el.style.display = 'none');
+                document.querySelectorAll('.size-unit-text-1000, .size-unit-text-1024').forEach(el => el.style.display = 'inline');
+                document.querySelectorAll('.size-unit-text-en').forEach(el => el.style.display = 'none');
+            }
+        }
+
+        // 言語切り替えボタンの設定
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const lang = btn.getAttribute('data-lang');
+                updatePrivacyLanguage(lang);
+                setCookie('lang', lang);
+                document.querySelectorAll('.lang-btn').forEach(b => {
+                    b.classList.toggle('active', b.getAttribute('data-lang') === lang);
+                });
+            });
+        });
+
+        // デスクトップで左右のカード以外をタップするとトップページに戻る
+        let desktopClickHandler = null;
+        function setupDesktopClickToClose() {
+            // 既存のハンドラーを削除
+            if (desktopClickHandler) {
+                document.body.removeEventListener('click', desktopClickHandler);
+            }
+            
+            if (window.innerWidth > 480) {
+                desktopClickHandler = (e) => {
+                    const card = document.querySelector('.card');
+                    const container = document.querySelector('.container');
+                    const topRightControls = document.querySelector('.top-right-controls');
+                    const floatingCloseBtn = document.getElementById('floatingCloseBtn');
+                    const backToHomeLink = document.getElementById('backToHomeLink');
+                    const settingsModal = document.getElementById('settingsModal');
+                    
+                    // カード、コンテナ、コントロール、閉じるボタン、トップページリンク、設定モーダル以外をクリックした場合
+                    if (!card.contains(e.target) && 
+                        !container.contains(e.target) && 
+                        !topRightControls.contains(e.target) &&
+                        !floatingCloseBtn?.contains(e.target) &&
+                        !backToHomeLink?.contains(e.target) &&
+                        !settingsModal.contains(e.target)) {
+                        window.location.href = '../index.html';
+                    }
+                };
+                document.body.addEventListener('click', desktopClickHandler);
+            }
+        }
+        
+        // 閉じるボタンのイベント
+        function setupCloseButtons() {
+            const floatingCloseBtn = document.getElementById('floatingCloseBtn');
+            const backToHomeLink = document.getElementById('backToHomeLink');
+            
+            const goToHome = () => {
+                window.location.href = '../index.html';
+            };
+            
+            if (floatingCloseBtn) {
+                floatingCloseBtn.addEventListener('click', goToHome);
+                
+                // aria-labelを更新
+                function updateFloatingCloseBtnLabel() {
+                    if (privacyTranslations[currentLang]) {
+                        floatingCloseBtn.setAttribute('aria-label', privacyTranslations[currentLang].close);
+                    }
+                }
+                updateFloatingCloseBtnLabel();
+                
+                // 言語変更時にaria-labelを更新
+                document.querySelectorAll('.lang-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        setTimeout(updateFloatingCloseBtnLabel, 100);
+                    });
+                });
+            }
+            
+            // 左下のトップページリンクのテキストを更新
+            if (backToHomeLink) {
+                function updateBackToHomeLink() {
+                    if (privacyTranslations[currentLang]) {
+                        backToHomeLink.textContent = privacyTranslations[currentLang].backToHome;
+                    }
+                }
+                updateBackToHomeLink();
+                
+                // 言語変更時にテキストを更新
+                document.querySelectorAll('.lang-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        setTimeout(updateBackToHomeLink, 100);
+                    });
+                });
+            }
+        }
+        
+        setupCloseButtons();
+        
+        // ウィンドウリサイズ時にデスクトップクリックイベントを再設定
+        window.addEventListener('resize', () => {
+            setupDesktopClickToClose();
+        });
+        
+        // 初期化
+        loadPrivacyTranslations();
+        setupDesktopClickToClose();
+    </script>
+</body>
+</html>
+
