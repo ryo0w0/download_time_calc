@@ -91,11 +91,11 @@
 
                 <section>
                     <h2 id="section8Title">8. お問い合わせ</h2>
-                    <p id="section8Text">プライバシーポリシーに関するご質問やご意見がございましたら、<a href="https://www.instagram.com/ryo0.jpg/" target="_blank" rel="noopener noreferrer">Instagram</a>までご連絡ください。</p>
+                    <p id="section8Text">バグ報告や改善提案がございましたら、<a href="https://github.com/ryo0w0/download_time_calc/issues" target="_blank" rel="noopener noreferrer">GitHubリポジトリのIssue</a>までお願いします。</p>
                 </section>
 
                 <section>
-                    <p id="lastUpdated">最終更新日: 2024年1月1日</p>
+                    <p id="lastUpdated">最終更新日: 2025年12月16日</p>
                 </section>
             </div>
         </div>
@@ -235,10 +235,18 @@
             document.getElementById('section8Title').textContent = t.section8Title;
             // section8TextはリンクをHTMLで含める
             const section8El = document.getElementById('section8Text');
-            section8El.innerHTML = t.section8Text.replace(
-                'Instagram',
-                '<a href="https://www.instagram.com/ryo0.jpg/" target="_blank" rel="noopener noreferrer">Instagram</a>'
-            );
+            const githubLink = '<a href="https://github.com/ryo0w0/download_time_calc/issues" target="_blank" rel="noopener noreferrer">';
+            if (lang === 'ja') {
+                section8El.innerHTML = t.section8Text.replace(
+                    'GitHubリポジトリのIssue',
+                    githubLink + 'GitHubリポジトリのIssue</a>'
+                );
+            } else {
+                section8El.innerHTML = t.section8Text.replace(
+                    'Issue on GitHub repository',
+                    githubLink + 'Issue on GitHub repository</a>'
+                );
+            }
             document.getElementById('lastUpdated').textContent = t.lastUpdated;
             
             // 設定モーダル

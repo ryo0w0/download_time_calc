@@ -4,6 +4,31 @@
     box-sizing: border-box;
 }
 
+/* ボタンタップ時の輝くアニメーション */
+@keyframes button-glow {
+    0% {
+        box-shadow: 0 0 0 0 var(--accent);
+    }
+    50% {
+        box-shadow: 0 0 20px 4px var(--accent);
+    }
+    100% {
+        box-shadow: 0 0 0 0 var(--accent);
+    }
+}
+
+@keyframes button-press {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(0.95);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
 :root {
     /* ライトモード */
     --light-bg-primary: #ffffff;
@@ -409,9 +434,11 @@ h1 {
     transition: opacity 0.2s ease;
 }
 
-.privacy-content a:hover {
-    opacity: 0.8;
-    text-decoration: underline;
+@media (hover: hover) {
+    .privacy-content a:hover {
+        opacity: 0.8;
+        text-decoration: underline;
+    }
 }
 
 @media (max-width: 480px) {
@@ -497,9 +524,11 @@ h1 {
     }
 }
 
-.privacy-link:hover {
-    color: var(--accent);
-    background-color: var(--bg-secondary);
+@media (hover: hover) {
+    .privacy-link:hover {
+        color: var(--accent);
+        background-color: var(--bg-secondary);
+    }
 }
 
 .lang-toggle {
@@ -539,13 +568,20 @@ h1 {
     }
 }
 
-.lang-btn:hover {
-    color: var(--text-primary);
+@media (hover: hover) {
+    .lang-btn:hover {
+        color: var(--text-primary);
+    }
 }
 
 .lang-btn.active {
     background-color: var(--accent);
     color: white;
+}
+
+.lang-btn:active {
+    transform: scale(0.9);
+    animation: button-glow 0.3s ease-out;
 }
 
 @keyframes rotate {
@@ -592,8 +628,15 @@ h1 {
     transform: rotate(0deg);
 }
 
-.settings-btn:hover {
-    background-color: var(--bg-secondary);
+@media (hover: hover) {
+    .settings-btn:hover {
+        background-color: var(--bg-secondary);
+    }
+}
+
+.settings-btn:active {
+    transform: scale(0.9) rotate(45deg);
+    animation: button-glow 0.3s ease-out;
 }
 
 .form-group {
@@ -606,8 +649,12 @@ label {
     font-size: 14px;
     font-weight: 500;
     color: var(--text-secondary);
-    text-transform: uppercase;
     letter-spacing: 0.5px;
+}
+
+/* フォームラベル（ファイルサイズ、回線速度など）*/
+.form-group > label {
+    text-transform: uppercase;
 }
 
 .input-row {
@@ -697,24 +744,27 @@ select:focus {
     transition: all 0.3s ease;
 }
 
-/* ホバー時の挙動 */
-.calculate-btn:hover {
-    background-color: var(--accent-hover);
-    transform: translateY(-2px); /* ボタン自体が少し浮く */
-    box-shadow: none; /* 念のためリセット */
-}
+/* ホバー時の挙動（ホバー可能なデバイスのみ） */
+@media (hover: hover) {
+    .calculate-btn:hover {
+        background-color: var(--accent-hover);
+        transform: translateY(-2px); /* ボタン自体が少し浮く */
+        box-shadow: none; /* 念のためリセット */
+    }
 
-/* ホバー時の影の挙動 */
-.calculate-btn:hover::before {
-    opacity: 0.5;            /* 少し濃く */
-    filter: blur(14px);      /* ぼかしを広げる */
-    transform: translateY(6px) scale(1); /* 影が広がる */
+    /* ホバー時の影の挙動 */
+    .calculate-btn:hover::before {
+        opacity: 0.5;            /* 少し濃く */
+        filter: blur(14px);      /* ぼかしを広げる */
+        transform: translateY(6px) scale(1); /* 影が広がる */
+    }
 }
 
 
 /* クリック時の挙動 */
 .calculate-btn:active {
-    transform: translateY(0);
+    transform: scale(0.97);
+    animation: button-glow 0.4s ease-out;
 }
 
 .calculate-btn:active::before {
@@ -801,9 +851,16 @@ select:focus {
     transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-.clear-history-btn:hover {
-    background-color: var(--bg-hover);
-    color: var(--text-primary);
+@media (hover: hover) {
+    .clear-history-btn:hover {
+        background-color: var(--bg-hover);
+        color: var(--text-primary);
+    }
+}
+
+.clear-history-btn:active {
+    transform: scale(0.9);
+    animation: button-glow 0.3s ease-out;
 }
 
 .history-list {
@@ -825,9 +882,16 @@ select:focus {
     gap: 12px;
 }
 
-.history-item:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px var(--shadow);
+@media (hover: hover) {
+    .history-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px var(--shadow);
+    }
+}
+
+.history-item:active {
+    transform: scale(0.98);
+    box-shadow: 0 0 12px var(--accent);
 }
 
 .history-item-content {
@@ -855,13 +919,16 @@ select:focus {
     justify-content: center;
 }
 
-.delete-history-item-btn:hover {
-    background-color: var(--bg-hover);
-    color: var(--text-primary);
+@media (hover: hover) {
+    .delete-history-item-btn:hover {
+        background-color: var(--bg-hover);
+        color: var(--text-primary);
+    }
 }
 
 .delete-history-item-btn:active {
-    transform: scale(0.9);
+    transform: scale(0.85);
+    animation: button-glow 0.3s ease-out;
 }
 
 .history-item-row {
@@ -958,6 +1025,10 @@ body[data-theme="light"] .toggle-switch input:checked + .toggle-slider:before {
     background-color: white;
 }
 
+.toggle-switch:active .toggle-slider {
+    box-shadow: 0 0 12px var(--accent);
+}
+
 /* 設定モーダル */
 .modal {
     display: none;
@@ -1014,8 +1085,15 @@ body[data-theme="light"] .toggle-switch input:checked + .toggle-slider:before {
     line-height: 1;
 }
 
-.close-btn:hover {
-    color: var(--text-primary);
+@media (hover: hover) {
+    .close-btn:hover {
+        color: var(--text-primary);
+    }
+}
+
+.close-btn:active {
+    transform: scale(0.9);
+    color: var(--accent);
 }
 
 .save-btn {
@@ -1031,13 +1109,16 @@ body[data-theme="light"] .toggle-switch input:checked + .toggle-slider:before {
     margin-left: 12px;
 }
 
-.save-btn:hover {
-    background-color: var(--accent-hover);
-    transform: translateY(-1px);
+@media (hover: hover) {
+    .save-btn:hover {
+        background-color: var(--accent-hover);
+        transform: translateY(-1px);
+    }
 }
 
 .save-btn:active {
-    transform: translateY(0);
+    transform: scale(0.95);
+    animation: button-glow 0.3s ease-out;
 }
 
 @media (max-width: 480px) {
@@ -1077,8 +1158,15 @@ body[data-theme="light"] .toggle-switch input:checked + .toggle-slider:before {
     text-align: center;
 }
 
-.option-btn:hover {
-    border-color: var(--accent);
+@media (hover: hover) {
+    .option-btn:hover {
+        border-color: var(--accent);
+    }
+}
+
+.option-btn:active {
+    transform: scale(0.95);
+    animation: button-glow 0.3s ease-out;
 }
 
 .option-btn.active {
@@ -1146,14 +1234,17 @@ body[data-theme="light"] .toggle-switch input:checked + .toggle-slider:before {
     height: 300px;
 }
 
-.expand-btn:hover {
-    border-color: var(--accent);
-    background-color: var(--bg-card);
-    transform: scale(1.02);
+@media (hover: hover) {
+    .expand-btn:hover {
+        border-color: var(--accent);
+        background-color: var(--bg-card);
+        transform: scale(1.02);
+    }
 }
 
 .expand-btn:active {
-    transform: scale(0.98);
+    transform: scale(0.95);
+    animation: button-glow 0.3s ease-out;
 }
 
 @media (min-width: 481px) {
@@ -1198,8 +1289,10 @@ body[data-theme="light"] .toggle-switch input:checked + .toggle-slider:before {
     transition: color 0.2s ease;
 }
 
-.footer a:hover {
-    color: var(--accent);
+@media (hover: hover) {
+    .footer a:hover {
+        color: var(--accent);
+    }
 }
 
 .footer-dot {
@@ -1225,8 +1318,15 @@ body[data-theme="light"] .toggle-switch input:checked + .toggle-slider:before {
     z-index: 100;
 }
 
-.privacy-link-bottom-left:hover {
-    color: var(--accent);
+@media (hover: hover) {
+    .privacy-link-bottom-left:hover {
+        color: var(--accent);
+    }
+}
+
+.privacy-link-bottom-left:active {
+    transform: scale(0.95);
+    animation: button-glow 0.3s ease-out;
 }
 
 @media (max-width: 480px) {
@@ -1250,9 +1350,16 @@ body[data-theme="light"] .toggle-switch input:checked + .toggle-slider:before {
     font-weight: 500;
 }
 
-.privacy-link-settings:hover {
-    background-color: var(--accent);
-    color: white;
+@media (hover: hover) {
+    .privacy-link-settings:hover {
+        background-color: var(--accent);
+        color: white;
+    }
+}
+
+.privacy-link-settings:active {
+    transform: scale(0.95);
+    animation: button-glow 0.3s ease-out;
 }
 
 .floating-close-btn {
@@ -1275,6 +1382,11 @@ body[data-theme="light"] .toggle-switch input:checked + .toggle-slider:before {
     transition: all 0.2s ease;
     line-height: 1;
     padding: 0;
+}
+
+.floating-close-btn:active {
+    transform: scale(0.9);
+    animation: button-glow 0.3s ease-out;
 }
 
 /* デスクトップ時：カードの右上に配置 */
