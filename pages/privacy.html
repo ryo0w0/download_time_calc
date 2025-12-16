@@ -37,8 +37,8 @@
 
     <div class="container">
         <div class="card">
-            <!-- 閉じるボタン（レスポンシブ） -->
-            <button class="floating-close-btn" id="floatingCloseBtn" aria-label="閉じる">✕</button>
+            <!-- 閉じるボタン -->
+            <button class="floating-close-btn" id="floatingCloseBtn" aria-label="閉じる" onclick="window.location.href='../index.html'">✕</button>
             <header>
                 <h1 id="pageTitle">プライバシーポリシー</h1>
             </header>
@@ -138,54 +138,15 @@
                     <button class="option-btn" data-color="purple">
                         <span class="color-preview" style="background-color: #9C27B0;"></span><span class="color-text-purple">パープル</span><span class="color-text-en" style="display:none;">Purple</span>
                     </button>
-                    <div class="color-options-expandable" id="colorOptionsExpandable">
-                        <button class="option-btn" data-color="orange">
-                            <span class="color-preview" style="background-color: #FF9800;"></span><span class="color-text-orange">オレンジ</span><span class="color-text-en" style="display:none;">Orange</span>
-                        </button>
-                        <button class="option-btn" data-color="red">
-                            <span class="color-preview" style="background-color: #F44336;"></span><span class="color-text-red">レッド</span><span class="color-text-en" style="display:none;">Red</span>
-                        </button>
-                        <button class="option-btn" data-color="pink">
-                            <span class="color-preview" style="background-color: #E91E63;"></span><span class="color-text-pink">ピンク</span><span class="color-text-en" style="display:none;">Pink</span>
-                        </button>
-                        <button class="option-btn" data-color="pastel-blue">
-                            <span class="color-preview" style="background-color: #A8D5E2;"></span><span class="color-text-pastel-blue">シアン</span><span class="color-text-en" style="display:none;">Cyan</span>
-                        </button>
-                        <button class="option-btn" data-color="pastel-green">
-                            <span class="color-preview" style="background-color: #B5E5CF;"></span><span class="color-text-pastel-green">ミント</span><span class="color-text-en" style="display:none;">Mint</span>
-                        </button>
-                        <button class="option-btn" data-color="pastel-yellow">
-                            <span class="color-preview" style="background-color: #FFE5B4;"></span><span class="color-text-pastel-yellow">レモン</span><span class="color-text-en" style="display:none;">Lemon</span>
-                        </button>
-                        <button class="option-btn" data-color="pastel-pink">
-                            <span class="color-preview" style="background-color: #FFD1DC;"></span><span class="color-text-pastel-pink">ローズ</span><span class="color-text-en" style="display:none;">Rose</span>
-                        </button>
-                    </div>
-                    <button class="expand-btn" id="expandColorsBtn" style="display: none;">
-                        <span class="expand-text-ja">もっと見る</span><span class="expand-text-en" style="display:none;">Show More</span>
+                    <button class="option-btn" data-color="orange">
+                        <span class="color-preview" style="background-color: #FF9800;"></span><span class="color-text-orange">オレンジ</span><span class="color-text-en" style="display:none;">Orange</span>
                     </button>
-                </div>
-            </div>
-
-            <div class="setting-section">
-                <h3 id="sizeUnitTitle">ファイルサイズ単位</h3>
-                <div class="theme-options">
-                    <button class="option-btn" data-size-unit="1000">
-                        <span class="size-unit-text-1000">1GB = 1000MB</span><span class="size-unit-text-en" style="display:none;">1GB = 1000MB</span>
+                    <button class="option-btn" data-color="red">
+                        <span class="color-preview" style="background-color: #F44336;"></span><span class="color-text-red">レッド</span><span class="color-text-en" style="display:none;">Red</span>
                     </button>
-                    <button class="option-btn" data-size-unit="1024">
-                        <span class="size-unit-text-1024">1GB = 1024MB</span><span class="size-unit-text-en" style="display:none;">1GB = 1024MB</span>
+                    <button class="option-btn" data-color="pink">
+                        <span class="color-preview" style="background-color: #E91E63;"></span><span class="color-text-pink">ピンク</span><span class="color-text-en" style="display:none;">Pink</span>
                     </button>
-                </div>
-            </div>
-
-            <div class="setting-section">
-                <div class="toggle-setting">
-                    <label for="historyToggle" id="historyToggleLabel">履歴機能</label>
-                    <label class="toggle-switch">
-                        <input type="checkbox" id="historyToggle" checked>
-                        <span class="toggle-slider"></span>
-                    </label>
                 </div>
             </div>
 
@@ -195,251 +156,240 @@
         </div>
     </div>
 
-    <script src="../js/main.js"></script>
     <script>
-        // Service Workerの登録
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/download_time_calc/js/service-worker.js')
-                    .then((registration) => {
-                        console.log('ServiceWorker registration successful:', registration.scope);
-                    })
-                    .catch((error) => {
-                        console.log('ServiceWorker registration failed:', error);
-                    });
-            });
+        // ====== Cookie管理関数 ======
+        function getCookie(name) {
+            const nameEQ = name + "=";
+            const ca = document.cookie.split(';');
+            for (let i = 0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+                if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+            }
+            return null;
         }
 
-        // プライバシーポリシーページ用の翻訳データ
-        let privacyTranslations = {};
-        let currentLang = getCookie('lang') || 'ja';
+        function setCookie(name, value, days = 365) {
+            const date = new Date();
+            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+            const expires = "expires=" + date.toUTCString();
+            document.cookie = name + "=" + value + ";" + expires + ";path=/";
+        }
 
-        async function loadPrivacyTranslations() {
+        // ====== 設定の読み込みと適用 ======
+        let savedTheme = getCookie('theme') || 'dark';
+        let savedAccent = getCookie('accent') || 'mono';
+        let currentLang = getCookie('lang') || 'ja';
+        let translations = {};
+
+        // テーマとアクセントを適用
+        document.body.setAttribute('data-theme', savedTheme);
+        document.body.setAttribute('data-accent', savedAccent);
+
+        // ====== 翻訳データの読み込み（プライバシーポリシー専用） ======
+        async function loadTranslations() {
             try {
                 const [jaData, enData] = await Promise.all([
-                    fetch('../data/ja.json').then(res => res.json()),
-                    fetch('../data/en.json').then(res => res.json())
+                    fetch('../data/privacy_ja.json').then(res => res.json()),
+                    fetch('../data/privacy_en.json').then(res => res.json())
                 ]);
-                privacyTranslations = {
-                    ja: jaData,
-                    en: enData
-                };
-                updatePrivacyLanguage(currentLang);
-                return Promise.resolve();
+                translations = { ja: jaData, en: enData };
+                updateLanguage(currentLang);
             } catch (error) {
                 console.error('翻訳データの読み込みに失敗しました:', error);
-                return Promise.reject(error);
             }
         }
 
-        function updatePrivacyLanguage(lang) {
+        // ====== 言語の更新 ======
+        function updateLanguage(lang) {
             currentLang = lang;
-            if (!privacyTranslations[lang]) return;
+            if (!translations[lang]) return;
 
-            const t = privacyTranslations[lang];
+            const t = translations[lang];
             
-            // タイトルを更新
-            const pageTitle = document.getElementById('pageTitle');
-            if (pageTitle) pageTitle.textContent = t.privacyPolicyTitle;
+            // ページタイトル
+            document.getElementById('pageTitle').textContent = t.privacyPolicyTitle;
+            document.getElementById('backToHomeLink').textContent = t.backToHome;
             
-            const backToHome = document.getElementById('backToHome');
-            if (backToHome) backToHome.textContent = t.backToHome;
+            // セクション
+            document.getElementById('section1Title').textContent = t.section1Title;
+            document.getElementById('section1Text').textContent = t.section1Text;
+            document.getElementById('section2Title').textContent = t.section2Title;
+            document.getElementById('section2Text').textContent = t.section2Text;
+            document.getElementById('section2Item1').textContent = t.section2Item1;
+            document.getElementById('section2Item2').textContent = t.section2Item2;
+            document.getElementById('section2Item3').textContent = t.section2Item3;
+            document.getElementById('section3Title').textContent = t.section3Title;
+            document.getElementById('section3Text').textContent = t.section3Text;
+            document.getElementById('section3Item1').textContent = t.section3Item1;
+            document.getElementById('section3Item2').textContent = t.section3Item2;
+            document.getElementById('section3Item3').textContent = t.section3Item3;
+            document.getElementById('section4Title').textContent = t.section4Title;
+            document.getElementById('section4Text').textContent = t.section4Text;
+            document.getElementById('section5Title').textContent = t.section5Title;
+            document.getElementById('section5Text').textContent = t.section5Text;
+            document.getElementById('section6Title').textContent = t.section6Title;
+            document.getElementById('section6Text').textContent = t.section6Text;
+            document.getElementById('section7Title').textContent = t.section7Title;
+            document.getElementById('section7Text').textContent = t.section7Text;
+            document.getElementById('section8Title').textContent = t.section8Title;
+            // section8TextはリンクをHTMLで含める
+            const section8El = document.getElementById('section8Text');
+            section8El.innerHTML = t.section8Text.replace(
+                'Instagram',
+                '<a href="https://www.instagram.com/ryo0.jpg/" target="_blank" rel="noopener noreferrer">Instagram</a>'
+            );
+            document.getElementById('lastUpdated').textContent = t.lastUpdated;
             
-            // セクションタイトルとテキストを更新
-            const section1Title = document.getElementById('section1Title');
-            if (section1Title) section1Title.textContent = t.section1Title;
-            const section1Text = document.getElementById('section1Text');
-            if (section1Text) section1Text.textContent = t.section1Text;
+            // 設定モーダル
+            document.getElementById('settingsTitle').textContent = t.settingsTitle;
+            document.getElementById('themeTitle').textContent = t.themeTitle;
+            document.getElementById('colorTitle').textContent = t.colorTitle;
+            document.getElementById('saveBtnText').textContent = t.saveBtn;
             
-            const section2Title = document.getElementById('section2Title');
-            if (section2Title) section2Title.textContent = t.section2Title;
-            const section2Text = document.getElementById('section2Text');
-            if (section2Text) section2Text.textContent = t.section2Text;
-            const section2Item1 = document.getElementById('section2Item1');
-            if (section2Item1) section2Item1.textContent = t.section2Item1;
-            const section2Item2 = document.getElementById('section2Item2');
-            if (section2Item2) section2Item2.textContent = t.section2Item2;
-            const section2Item3 = document.getElementById('section2Item3');
-            if (section2Item3) section2Item3.textContent = t.section2Item3;
-            
-            const section3Title = document.getElementById('section3Title');
-            if (section3Title) section3Title.textContent = t.section3Title;
-            const section3Text = document.getElementById('section3Text');
-            if (section3Text) section3Text.textContent = t.section3Text;
-            const section3Item1 = document.getElementById('section3Item1');
-            if (section3Item1) section3Item1.textContent = t.section3Item1;
-            const section3Item2 = document.getElementById('section3Item2');
-            if (section3Item2) section3Item2.textContent = t.section3Item2;
-            const section3Item3 = document.getElementById('section3Item3');
-            if (section3Item3) section3Item3.textContent = t.section3Item3;
-            
-            const section4Title = document.getElementById('section4Title');
-            if (section4Title) section4Title.textContent = t.section4Title;
-            const section4Text = document.getElementById('section4Text');
-            if (section4Text) section4Text.textContent = t.section4Text;
-            
-            const section5Title = document.getElementById('section5Title');
-            if (section5Title) section5Title.textContent = t.section5Title;
-            const section5Text = document.getElementById('section5Text');
-            if (section5Text) section5Text.textContent = t.section5Text;
-            
-            const section6Title = document.getElementById('section6Title');
-            if (section6Title) section6Title.textContent = t.section6Title;
-            const section6Text = document.getElementById('section6Text');
-            if (section6Text) section6Text.textContent = t.section6Text;
-            
-            const section7Title = document.getElementById('section7Title');
-            if (section7Title) section7Title.textContent = t.section7Title;
-            const section7Text = document.getElementById('section7Text');
-            if (section7Text) section7Text.textContent = t.section7Text;
-            
-            const section8Title = document.getElementById('section8Title');
-            if (section8Title) section8Title.textContent = t.section8Title;
-            const section8Text = document.getElementById('section8Text');
-            if (section8Text) section8Text.textContent = t.section8Text;
-            
-            const lastUpdated = document.getElementById('lastUpdated');
-            if (lastUpdated) lastUpdated.textContent = t.lastUpdated;
-            
-            // 設定モーダルのテキストも更新
-            const settingsTitle = document.getElementById('settingsTitle');
-            if (settingsTitle) settingsTitle.textContent = t.settingsTitle;
-            const themeTitle = document.getElementById('themeTitle');
-            if (themeTitle) themeTitle.textContent = t.themeTitle;
-            const colorTitle = document.getElementById('colorTitle');
-            if (colorTitle) colorTitle.textContent = t.colorTitle;
-            const sizeUnitTitle = document.getElementById('sizeUnitTitle');
-            if (sizeUnitTitle) sizeUnitTitle.textContent = t.sizeUnitTitle;
-            const historyToggleLabel = document.getElementById('historyToggleLabel');
-            if (historyToggleLabel) historyToggleLabel.textContent = t.historyToggleLabel;
-            const saveBtnText = document.getElementById('saveBtnText');
-            if (saveBtnText) saveBtnText.textContent = t.saveBtn;
-            const saveBtnTextEn = document.getElementById('saveBtnTextEn');
-            if (saveBtnTextEn) saveBtnTextEn.textContent = t.saveBtn;
-            
-            // タイトルを更新
+            // ページタイトル
             document.title = t.privacyPolicyTitle + ' - ' + (lang === 'en' ? 'Download Time Calculator' : 'ダウンロード時間計算');
             
             // 設定モーダル内のテキスト切り替え
             if (lang === 'en') {
                 document.querySelectorAll('.theme-text-light, .theme-text-dark, .theme-text-gray').forEach(el => el.style.display = 'none');
-                document.querySelectorAll('.color-text-blue, .color-text-green, .color-text-purple, .color-text-orange, .color-text-red, .color-text-mono, .color-text-pastel-blue, .color-text-pastel-green, .color-text-pastel-yellow, .color-text-pastel-pink, .color-text-pink').forEach(el => el.style.display = 'none');
+                document.querySelectorAll('.color-text-blue, .color-text-green, .color-text-purple, .color-text-orange, .color-text-red, .color-text-mono, .color-text-pink').forEach(el => el.style.display = 'none');
                 document.querySelectorAll('.theme-text-en, .color-text-en').forEach(el => el.style.display = 'inline');
-                document.querySelectorAll('.expand-text-ja').forEach(el => el.style.display = 'none');
-                document.querySelectorAll('.expand-text-en').forEach(el => el.style.display = 'inline');
-                document.querySelectorAll('.size-unit-text-1000, .size-unit-text-1024').forEach(el => el.style.display = 'none');
-                document.querySelectorAll('.size-unit-text-en').forEach(el => el.style.display = 'inline');
             } else {
                 document.querySelectorAll('.theme-text-light, .theme-text-dark, .theme-text-gray').forEach(el => el.style.display = 'inline');
-                document.querySelectorAll('.color-text-blue, .color-text-green, .color-text-purple, .color-text-orange, .color-text-red, .color-text-mono, .color-text-pastel-blue, .color-text-pastel-green, .color-text-pastel-yellow, .color-text-pastel-pink, .color-text-pink').forEach(el => el.style.display = 'inline');
+                document.querySelectorAll('.color-text-blue, .color-text-green, .color-text-purple, .color-text-orange, .color-text-red, .color-text-mono, .color-text-pink').forEach(el => el.style.display = 'inline');
                 document.querySelectorAll('.theme-text-en, .color-text-en').forEach(el => el.style.display = 'none');
-                document.querySelectorAll('.expand-text-ja').forEach(el => el.style.display = 'inline');
-                document.querySelectorAll('.expand-text-en').forEach(el => el.style.display = 'none');
-                document.querySelectorAll('.size-unit-text-1000, .size-unit-text-1024').forEach(el => el.style.display = 'inline');
-                document.querySelectorAll('.size-unit-text-en').forEach(el => el.style.display = 'none');
             }
+
+            // 言語ボタンのアクティブ状態更新
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+            });
         }
 
-        // 言語切り替えボタンの設定
-        document.querySelectorAll('.lang-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const lang = btn.getAttribute('data-lang');
-                updatePrivacyLanguage(lang);
-                setCookie('lang', lang);
-                document.querySelectorAll('.lang-btn').forEach(b => {
-                    b.classList.toggle('active', b.getAttribute('data-lang') === lang);
+        // ====== アクティブボタンの更新 ======
+        function updateActiveButtons() {
+            const currentTheme = document.body.getAttribute('data-theme');
+            const currentAccent = document.body.getAttribute('data-accent');
+
+            document.querySelectorAll('.option-btn[data-theme]').forEach(btn => {
+                btn.classList.toggle('active', btn.getAttribute('data-theme') === currentTheme);
+            });
+
+            document.querySelectorAll('.option-btn[data-color]').forEach(btn => {
+                btn.classList.toggle('active', btn.getAttribute('data-color') === currentAccent);
+            });
+        }
+
+        // ====== JST時刻の更新 ======
+        function updateJSTTime() {
+            const jstTimeElement = document.getElementById('jstTime');
+            if (!jstTimeElement) return;
+            const now = new Date();
+            const jstTime = new Intl.DateTimeFormat('ja-JP', {
+                timeZone: 'Asia/Tokyo',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+            }).format(now);
+            jstTimeElement.textContent = `JST ${jstTime}`;
+        }
+
+        // ====== 初期化 ======
+        document.addEventListener('DOMContentLoaded', function() {
+            const settingsBtn = document.getElementById('settingsBtn');
+            const settingsModal = document.getElementById('settingsModal');
+            const closeModal = document.getElementById('closeModal');
+            const saveSettings = document.getElementById('saveSettings');
+
+            // 設定ボタン
+            settingsBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                settingsModal.classList.add('show');
+                updateActiveButtons();
+            });
+
+            // モーダルを閉じる
+            closeModal.addEventListener('click', function() {
+                settingsModal.classList.remove('show');
+            });
+
+            saveSettings.addEventListener('click', function() {
+                settingsModal.classList.remove('show');
+            });
+
+            // モーダル外クリックで閉じる
+            settingsModal.addEventListener('click', function(e) {
+                if (e.target === settingsModal) {
+                    settingsModal.classList.remove('show');
+                }
+            });
+
+            // テーマ変更
+            document.querySelectorAll('.option-btn[data-theme]').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const theme = this.getAttribute('data-theme');
+                    document.body.setAttribute('data-theme', theme);
+                    setCookie('theme', theme);
+                    updateActiveButtons();
                 });
             });
-        });
 
-        // デスクトップで左右のカード以外をタップするとトップページに戻る
-        let desktopClickHandler = null;
-        function setupDesktopClickToClose() {
-            // 既存のハンドラーを削除
-            if (desktopClickHandler) {
-                document.body.removeEventListener('click', desktopClickHandler);
-            }
-            
-            if (window.innerWidth > 480) {
-                desktopClickHandler = (e) => {
-                    const card = document.querySelector('.card');
-                    const container = document.querySelector('.container');
-                    const topRightControls = document.querySelector('.top-right-controls');
-                    const floatingCloseBtn = document.getElementById('floatingCloseBtn');
-                    const backToHomeLink = document.getElementById('backToHomeLink');
-                    const settingsModal = document.getElementById('settingsModal');
-                    
-                    // カード、コンテナ、コントロール、閉じるボタン、トップページリンク、設定モーダル以外をクリックした場合
-                    if (!card.contains(e.target) && 
-                        !container.contains(e.target) && 
-                        !topRightControls.contains(e.target) &&
-                        !floatingCloseBtn?.contains(e.target) &&
-                        !backToHomeLink?.contains(e.target) &&
-                        !settingsModal.contains(e.target)) {
-                        window.location.href = '../index.html';
-                    }
-                };
-                document.body.addEventListener('click', desktopClickHandler);
-            }
-        }
-        
-        // 閉じるボタンのイベント
-        function setupCloseButtons() {
-            const floatingCloseBtn = document.getElementById('floatingCloseBtn');
-            const backToHomeLink = document.getElementById('backToHomeLink');
-            
-            const goToHome = () => {
-                window.location.href = '../index.html';
-            };
-            
-            if (floatingCloseBtn) {
-                floatingCloseBtn.addEventListener('click', goToHome);
-                
-                // aria-labelを更新
-                function updateFloatingCloseBtnLabel() {
-                    if (privacyTranslations[currentLang]) {
-                        floatingCloseBtn.setAttribute('aria-label', privacyTranslations[currentLang].close);
-                    }
-                }
-                updateFloatingCloseBtnLabel();
-                
-                // 言語変更時にaria-labelを更新
-                document.querySelectorAll('.lang-btn').forEach(btn => {
-                    btn.addEventListener('click', () => {
-                        setTimeout(updateFloatingCloseBtnLabel, 100);
-                    });
+            // アクセントカラー変更
+            document.querySelectorAll('.option-btn[data-color]').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const color = this.getAttribute('data-color');
+                    document.body.setAttribute('data-accent', color);
+                    setCookie('accent', color);
+                    updateActiveButtons();
                 });
-            }
-            
-            // 左下のトップページリンクのテキストを更新
-            if (backToHomeLink) {
-                function updateBackToHomeLink() {
-                    if (privacyTranslations[currentLang]) {
-                        backToHomeLink.textContent = privacyTranslations[currentLang].backToHome;
-                    }
-                }
-                updateBackToHomeLink();
-                
-                // 言語変更時にテキストを更新
-                document.querySelectorAll('.lang-btn').forEach(btn => {
-                    btn.addEventListener('click', () => {
-                        setTimeout(updateBackToHomeLink, 100);
-                    });
+            });
+
+            // 言語切り替え
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const lang = this.getAttribute('data-lang');
+                    updateLanguage(lang);
+                    setCookie('lang', lang);
                 });
-            }
-        }
-        
-        setupCloseButtons();
-        
-        // ウィンドウリサイズ時にデスクトップクリックイベントを再設定
-        window.addEventListener('resize', () => {
-            setupDesktopClickToClose();
+            });
+
+            // デスクトップでカード外クリックでトップページに戻る
+            document.body.addEventListener('click', function(e) {
+                if (window.innerWidth <= 480) return;
+                
+                const card = document.querySelector('.card');
+                const container = document.querySelector('.container');
+                const topRightControls = document.querySelector('.top-right-controls');
+                const backToHomeLink = document.getElementById('backToHomeLink');
+                const settingsModal = document.getElementById('settingsModal');
+                
+                // 設定モーダルが開いている場合は何もしない
+                if (settingsModal.classList.contains('show')) return;
+                
+                // カード、コントロール、トップページリンク以外をクリックした場合
+                if (!card.contains(e.target) && 
+                    !container.contains(e.target) && 
+                    !topRightControls.contains(e.target) &&
+                    !backToHomeLink.contains(e.target)) {
+                    window.location.href = '../index.html';
+                }
+            });
+
+            // JST時刻の更新
+            updateJSTTime();
+            setInterval(updateJSTTime, 1000);
+
+            // 翻訳データの読み込み
+            loadTranslations();
+            
+            // アクティブボタンの初期化
+            updateActiveButtons();
         });
-        
-        // 初期化
-        loadPrivacyTranslations();
-        setupDesktopClickToClose();
     </script>
 </body>
 </html>
-
