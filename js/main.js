@@ -402,16 +402,20 @@ function updateLanguage(lang) {
     // 履歴関連のテキストを更新
     const historyTitle = document.getElementById('historyTitle');
     const historyToggleLabel = document.getElementById('historyToggleLabel');
+    const historyToggleDescription = document.getElementById('historyToggleDescription');
     const clearHistoryBtn = document.getElementById('clearHistoryBtn');
     if (historyTitle) historyTitle.textContent = t.historyTitle;
     if (historyToggleLabel) historyToggleLabel.textContent = t.historyToggleLabel;
+    if (historyToggleDescription) historyToggleDescription.textContent = t.historyToggleDescription;
     if (clearHistoryBtn) clearHistoryBtn.setAttribute('aria-label', t.clearHistoryLabel);
     
     // プライバシーリンク関連のテキストを更新
     const privacyLinkToggleLabel = document.getElementById('privacyLinkToggleLabel');
+    const privacyLinkToggleDescription = document.getElementById('privacyLinkToggleDescription');
     const privacyLinkFooter = document.getElementById('privacyLinkFooter');
     const privacyLinkSettings = document.getElementById('privacyLinkSettings');
-    if (privacyLinkToggleLabel) privacyLinkToggleLabel.textContent = t.privacyLinkToggleLabel;
+    if (privacyLinkToggleLabel) privacyLinkToggleLabel.textContent = t.privacyLinkToggleTitle;
+    if (privacyLinkToggleDescription) privacyLinkToggleDescription.textContent = t.privacyLinkToggleDescription;
     if (privacyLinkFooter) privacyLinkFooter.textContent = t.privacyPolicy;
     if (privacyLinkSettings) privacyLinkSettings.textContent = t.privacyPolicy;
     

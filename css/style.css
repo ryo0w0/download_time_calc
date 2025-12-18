@@ -956,11 +956,24 @@ select:focus {
     padding: 12px 0;
 }
 
+.toggle-setting-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
 .toggle-setting label:first-child {
     color: var(--text-primary);
     font-size: 16px;
     font-weight: 500;
     cursor: pointer;
+}
+
+.toggle-setting-description {
+    color: var(--text-secondary);
+    font-size: 13px;
+    line-height: 1.4;
 }
 
 .toggle-switch {
@@ -1529,6 +1542,10 @@ body[data-theme="light"] .toggle-switch input:checked + .toggle-slider:before {
 
     .toggle-setting label:first-child {
         font-size: 14px;
+    }
+
+    .toggle-setting-description {
+        font-size: 12px;
     }
 
     .toggle-switch {

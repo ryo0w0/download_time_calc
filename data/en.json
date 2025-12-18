@@ -23,7 +23,10 @@
   "second": "s",
   "historyTitle": "History",
   "historyToggleLabel": "History Feature",
+  "historyToggleDescription": "Save up to 5 history items on device",
   "clearHistoryLabel": "Clear History",
+  "privacyLinkToggleTitle": "Privacy Policy",
   "privacyLinkToggleLabel": "Show Privacy Policy link in footer",
+  "privacyLinkToggleDescription": "Show Privacy Policy link in footer",
   "privacyPolicy": "Privacy Policy"
 }
