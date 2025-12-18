@@ -93,23 +93,23 @@ self.addEventListener('fetch', (event) => {
 
   // ナビゲーションリクエスト（HTMLページ）はネットワークファースト
   if (event.request.mode === 'navigate') {
-    event.respondWith(
-      fetch(event.request)
-        .then((response) => {
+  event.respondWith(
+    fetch(event.request)
+      .then((response) => {
           if (response && response.status === 200) {
-            const responseToCache = response.clone();
+          const responseToCache = response.clone();
             caches.open(CACHE_NAME).then((cache) => {
               cache.put(event.request, responseToCache);
             });
-          }
-          return response;
-        })
-        .catch(() => {
-          return caches.match(event.request)
-            .then((response) => {
-              if (response) {
-                return response;
-              }
+        }
+        return response;
+      })
+      .catch(() => {
+        return caches.match(event.request)
+          .then((response) => {
+            if (response) {
+              return response;
+            }
               // オフライン時のフォールバック
               return caches.match('/download_time_calc/index.html');
             });
