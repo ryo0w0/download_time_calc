@@ -55,10 +55,11 @@ function setupAllEventListeners() {
     settingsBtn.addEventListener('mouseleave', stopRotation);
     
     // タッチイベント（モバイル対応）
+    // fix: e.preventDefault() を追加して mouseenter との二重発火を防ぐ
     settingsBtn.addEventListener('touchstart', (e) => {
-        touchStartTime = Date.now();
+        e.preventDefault();
         startRotation();
-    });
+    }, { passive: false });
     
     settingsBtn.addEventListener('touchend', (e) => {
         stopRotation();
@@ -230,12 +231,11 @@ function setupAllEventListeners() {
     updateHistoryDisplay();
 }
 
-// 履歴機能
+// 履歴機能（localStorage を使用）
 function getHistory() {
-    const historyCookie = getCookie('calculationHistory');
-    if (!historyCookie) return [];
     try {
-        return JSON.parse(historyCookie);
+        const data = localStorage.getItem('calculationHistory');
+        return data ? JSON.parse(data) : [];
     } catch (e) {
         console.error('履歴の読み込みに失敗しました:', e);
         return [];
@@ -243,7 +243,11 @@ function getHistory() {
 }
 
 function saveHistory(history) {
-    setCookie('calculationHistory', JSON.stringify(history));
+    try {
+        localStorage.setItem('calculationHistory', JSON.stringify(history));
+    } catch (e) {
+        console.error('履歴の保存に失敗しました:', e);
+    }
 }
 
 function addToHistory(calculation) {
@@ -517,7 +521,6 @@ let rotationAngle = 0;
 let animationId = null;
 let isRotating = false;
 let startTime = 0;
-let touchStartTime = 0;
 
 function startRotation() {
     const settingsBtn = document.getElementById('settingsBtn');
@@ -762,16 +765,17 @@ function calculateDownloadTime() {
     }
 
     // 速度をMbpsに変換
+    // fix: 1000ベース（SI単位）を使用。1 Kbps = 0.001 Mbps、1 Gbps = 1000 Mbps
     let speedInMbps;
     switch (speedUnit) {
         case 'Kbps':
-            speedInMbps = speed / 1024;
+            speedInMbps = speed / 1000;
             break;
         case 'Mbps':
             speedInMbps = speed;
             break;
         case 'Gbps':
-            speedInMbps = speed * 1024;
+            speedInMbps = speed * 1000;
             break;
     }
 
@@ -832,4 +836,3 @@ function displayResult(totalSeconds) {
     resultValue.textContent = mainDisplay;
     resultDetail.textContent = detailDisplay;
 }
-
