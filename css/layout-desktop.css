@@ -1,0 +1,102 @@
+/*
+ * デスクトップ2カラムレイアウト
+ * 768px以上のビューポートで有効になります
+ * 左カラム: 入力フォーム + 結果（固定）
+ * 右カラム: 履歴（スクロール可能）
+ */
+
+@media (min-width: 768px) {
+    /* bodyをデフォルトのflex中央寄せから解放 */
+    body {
+        align-items: flex-start;
+        padding-top: 60px;
+        padding-bottom: 60px;
+    }
+
+    /* コンテナを最大幅まで広げて2カラムに */
+    .container {
+        max-width: 960px;
+        width: 100%;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+        align-items: start;
+    }
+
+    /* 左カラム: カード全体（フォーム + 結果）を固定 */
+    .container > .card {
+        position: sticky;
+        top: 60px; /* top-right-controlsの高さ分 */
+        /* 履歴ブロックは右カラムに移動するので非表示 */
+    }
+
+    /* 右カラム: 履歴ブロックを独立したカードとして配置 */
+    .history {
+        /* カードから切り出して独立カードに */
+        margin-top: 0 !important;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px var(--shadow);
+        background-color: var(--bg-card);
+        padding: 24px;
+        max-height: calc(100vh - 120px);
+        overflow-y: auto;
+        /* 履歴専用の色をカードベースに統一 */
+        --history-bg: var(--bg-card);
+    }
+
+    /* 履歴ブロックをcontainerの直下に引き上げる（グリッド2列目へ） */
+    .history {
+        grid-column: 2;
+        grid-row: 1;
+    }
+
+    /* 履歴がない状態（非表示）でも右カラムのスペースは保持しない */
+    .history[style*="display: none"] {
+        display: none !important;
+    }
+
+    /* 履歴が非表示の時はコンテナを1カラムに戻す */
+    .container:has(.history[style*="display: none"]) {
+        grid-template-columns: minmax(auto, 520px);
+        justify-content: center;
+    }
+
+    /* 履歴が表示される時はカードを左に配置 */
+    .container > .card {
+        grid-column: 1;
+        grid-row: 1;
+    }
+
+    /* 履歴ヘッダーのスタイル調整 */
+    .history .history-header h3 {
+        font-size: 18px;
+        font-weight: 600;
+    }
+
+    /* 履歴アイテムのスクロール用の余白 */
+    .history-list {
+        padding-bottom: 8px;
+    }
+
+    /* 履歴内の色をresult-bgではなくbg-secondaryベースに */
+    .history {
+        background-color: var(--bg-card) !important;
+    }
+
+    .history .history-header h3 {
+        color: var(--text-primary) !important;
+    }
+
+    .clear-history-btn {
+        color: var(--text-secondary);
+    }
+}
+
+/* 中間サイズ（768px〜1024px）の調整 */
+@media (min-width: 768px) and (max-width: 1024px) {
+    .container {
+        max-width: 100%;
+        padding-inline: 24px;
+        gap: 16px;
+    }
+}
