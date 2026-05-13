@@ -10,6 +10,7 @@
     <link rel="apple-touch-icon" href="/download_time_calc/images/apple-touch-icon.png">
     <link rel="manifest" href="/download_time_calc/manifest.json">
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/layout-desktop.css">
 
     <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-EJ1DN1T33S"></script>
@@ -71,14 +72,15 @@
                 <div class="result-value" id="resultValue">-</div>
                 <div class="result-detail" id="resultDetail">-</div>
             </div>
+        </div>
 
-            <div class="history" id="historyBlock" style="display: none;">
-                <div class="history-header">
-                    <h3 id="historyTitle">履歴</h3>
-                    <button class="clear-history-btn" id="clearHistoryBtn" aria-label="履歴を消去">🗑️</button>
-                </div>
-                <div class="history-list" id="historyList"></div>
+        <!-- 履歴ブロック: デスクトップでは右カラム、モバイルではカード下に表示 -->
+        <div class="history" id="historyBlock" style="display: none;">
+            <div class="history-header">
+                <h3 id="historyTitle">履歴</h3>
+                <button class="clear-history-btn" id="clearHistoryBtn" aria-label="履歴を消去">🗑️</button>
             </div>
+            <div class="history-list" id="historyList"></div>
         </div>
     </div>
 
