@@ -50,19 +50,32 @@ function setupAllEventListeners() {
         return;
     }
     
-    // 設定ボタンの回転アニメーション制御
+    // 設定ボタン: マウスホバーで回転アニメーション
     settingsBtn.addEventListener('mouseenter', startRotation);
     settingsBtn.addEventListener('mouseleave', stopRotation);
     
-    // タッチイベント（モバイル対応）
-    // fix: e.preventDefault() を追加して mouseenter との二重発火を防ぐ
+    // 設定ボタン: タッチ操作
+    // - touchstart: preventDefault() でスクロールを防ぎアニメーション開始
+    // - touchend:   モーダルを開く（click は preventDefault 後に発火しないため touchend で代替）
+    let touchMoved = false;
     settingsBtn.addEventListener('touchstart', (e) => {
         e.preventDefault();
+        touchMoved = false;
         startRotation();
     }, { passive: false });
-    
+
+    settingsBtn.addEventListener('touchmove', () => {
+        touchMoved = true;
+    }, { passive: true });
+
     settingsBtn.addEventListener('touchend', (e) => {
         stopRotation();
+        // スクロール中でない場合のみモーダルを開く
+        if (!touchMoved) {
+            settingsModal.classList.add('show');
+            updateActiveButtons();
+            updateExpandButtonVisibility();
+        }
     });
     
     // 展開ボタンのクリックイベント
@@ -95,7 +108,7 @@ function setupAllEventListeners() {
         });
     }
     
-    // 設定モーダルの表示/非表示
+    // 設定モーダルの表示/非表示（デスクトップ: click イベント）
     settingsBtn.addEventListener('click', () => {
         settingsModal.classList.add('show');
         updateActiveButtons();
