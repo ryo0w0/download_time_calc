@@ -1,90 +1,74 @@
 /*
  * デスクトップ2カラムレイアウト
  * 768px以上のビューポートで有効になります
- * 左カラム: 入力フォーム + 結果（固定）
+ * 左カラム: 入力フォーム + 結果（sticky固定）
  * 右カラム: 履歴（スクロール可能）
  */
 
 @media (min-width: 768px) {
-    /* bodyをデフォルトのflex中央寄せから解放 */
+
+    /* body: 水平・垂直両方のセンタリングを維持しつつ上下に余白 */
     body {
         align-items: flex-start;
         padding-top: 60px;
         padding-bottom: 60px;
     }
 
-    /* コンテナを最大幅まで広げて2カラムに */
+    /*
+     * コンテナ基本: 履歴なし状態
+     * - 全幅を不要なスペースなしで max-width に博る
+     * - 左右中央: margin: 0 auto
+     * - 1カラム（履歴非表示時のデフォルト）
+     */
     .container {
-        max-width: 960px;
+        max-width: 520px;
         width: 100%;
+        margin: 0 auto;
+        display: block; /* 履歴ブロックが非表示の時は通常ブロック */
+    }
+
+    /*
+     * 履歴表示時: 2カラムグリッドに切り替え
+     * :has() で #historyBlock が表示状態の時だけ適用
+     */
+    .container:has(#historyBlock:not([style*="display: none"])) {
+        max-width: 960px;
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 24px;
         align-items: start;
     }
 
-    /* 左カラム: カード全体（フォーム + 結果）を固定 */
-    .container > .card {
-        position: sticky;
-        top: 60px; /* top-right-controlsの高さ分 */
-        /* 履歴ブロックは右カラムに移動するので非表示 */
-    }
-
-    /* 右カラム: 履歴ブロックを独立したカードとして配置 */
-    .history {
-        /* カードから切り出して独立カードに */
-        margin-top: 0 !important;
-        border-radius: 16px;
-        box-shadow: 0 4px 20px var(--shadow);
-        background-color: var(--bg-card);
-        padding: 24px;
-        max-height: calc(100vh - 120px);
-        overflow-y: auto;
-        /* 履歴専用の色をカードベースに統一 */
-        --history-bg: var(--bg-card);
-    }
-
-    /* 履歴ブロックをcontainerの直下に引き上げる（グリッド2列目へ） */
-    .history {
-        grid-column: 2;
-        grid-row: 1;
-    }
-
-    /* 履歴がない状態（非表示）でも右カラムのスペースは保持しない */
-    .history[style*="display: none"] {
-        display: none !important;
-    }
-
-    /* 履歴が非表示の時はコンテナを1カラムに戻す */
-    .container:has(.history[style*="display: none"]) {
-        grid-template-columns: minmax(auto, 520px);
-        justify-content: center;
-    }
-
-    /* 履歴が表示される時はカードを左に配置 */
+    /* 左カラム: カードを固定 */
     .container > .card {
         grid-column: 1;
         grid-row: 1;
+        position: sticky;
+        top: 60px;
     }
 
-    /* 履歴ヘッダーのスタイル調整 */
+    /* 右カラム: 履歴ブロック */
+    .history {
+        grid-column: 2;
+        grid-row: 1;
+        margin-top: 0 !important;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px var(--shadow);
+        background-color: var(--bg-card) !important;
+        padding: 24px;
+        max-height: calc(100vh - 120px);
+        overflow-y: auto;
+    }
+
+    /* 履歴ヘッダー */
     .history .history-header h3 {
         font-size: 18px;
         font-weight: 600;
+        color: var(--text-primary) !important;
     }
 
-    /* 履歴アイテムのスクロール用の余白 */
     .history-list {
         padding-bottom: 8px;
-    }
-
-    /* 履歴内の色をresult-bgではなくbg-secondaryベースに */
-    .history {
-        background-color: var(--bg-card) !important;
-    }
-
-    .history .history-header h3 {
-        color: var(--text-primary) !important;
     }
 
     .clear-history-btn {
@@ -92,9 +76,9 @@
     }
 }
 
-/* 中間サイズ（768px〜1024px）の調整 */
+/* 中間サイズ（768px〜1024px）: 左右に適度なパディング */
 @media (min-width: 768px) and (max-width: 1024px) {
-    .container {
+    .container:has(#historyBlock:not([style*="display: none"])) {
         max-width: 100%;
         padding-inline: 24px;
         gap: 16px;
