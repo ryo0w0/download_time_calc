@@ -562,11 +562,22 @@ h1 {
     /* タップ遅延・ダブルタップズームを排除 */
     touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
-    /* タップ領域を確保 */
-    min-height: 44px;
+    /* 見た目のサイズはそのまま、疑似要素でタップ領域を拡張 */
+    position: relative;
     display: inline-flex;
     align-items: center;
     justify-content: center;
+}
+
+/* タップ領域を44x44pxに拡張（見た目は変えない） */
+.lang-btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    min-width: 44px;
+    min-height: 44px;
 }
 
 @media (max-width: 480px) {
