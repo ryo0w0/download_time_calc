@@ -38,7 +38,6 @@ function initializeApp() {
 
 // 全てのイベントリスナーを設定
 function setupAllEventListeners() {
-    // 設定の初期化
     const body = document.body;
     const settingsBtn = document.getElementById('settingsBtn');
     const settingsModal = document.getElementById('settingsModal');
@@ -50,32 +49,20 @@ function setupAllEventListeners() {
         return;
     }
     
-    // 設定ボタン: マウスホバーで回転アニメーション
-    settingsBtn.addEventListener('mouseenter', startRotation);
-    settingsBtn.addEventListener('mouseleave', stopRotation);
-    
-    // 設定ボタン: タッチ操作
-    // - touchstart: preventDefault() でスクロールを防ぎアニメーション開始
-    // - touchend:   モーダルを開く（click は preventDefault 後に発火しないため touchend で代替）
-    let touchMoved = false;
-    settingsBtn.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        touchMoved = false;
-        startRotation();
-    }, { passive: false });
+    // 設定ボタン: デスクトップのみ回転アニメーション（hover が使える環境だけ）
+    // モバイルでは hover イベントが信頼性低いため skip
+    if (window.matchMedia('(hover: hover)').matches) {
+        settingsBtn.addEventListener('mouseenter', startRotation);
+        settingsBtn.addEventListener('mouseleave', stopRotation);
+    }
 
-    settingsBtn.addEventListener('touchmove', () => {
-        touchMoved = true;
-    }, { passive: true });
-
-    settingsBtn.addEventListener('touchend', (e) => {
+    // 設定ボタン: click 一本で PC・モバイル両対応
+    // CSS の touch-action: manipulation により 300ms 遅延なし・ダブルタップズームなし
+    settingsBtn.addEventListener('click', () => {
+        settingsModal.classList.add('show');
+        updateActiveButtons();
+        updateExpandButtonVisibility();
         stopRotation();
-        // スクロール中でない場合のみモーダルを開く
-        if (!touchMoved) {
-            settingsModal.classList.add('show');
-            updateActiveButtons();
-            updateExpandButtonVisibility();
-        }
     });
     
     // 展開ボタンのクリックイベント
@@ -85,7 +72,6 @@ function setupAllEventListeners() {
         expandColorsBtn.addEventListener('click', () => {
             const isExpanded = colorOptionsExpandable.classList.contains('expanded');
             if (isExpanded) {
-                // 折りたたみ
                 colorOptionsExpandable.classList.remove('expanded');
                 const expandTextJa = expandColorsBtn.querySelector('.expand-text-ja');
                 const expandTextEn = expandColorsBtn.querySelector('.expand-text-en');
@@ -95,7 +81,6 @@ function setupAllEventListeners() {
                     if (expandTextJa) expandTextJa.textContent = translations.ja.expandText;
                 }
             } else {
-                // 展開
                 colorOptionsExpandable.classList.add('expanded');
                 const expandTextJa = expandColorsBtn.querySelector('.expand-text-ja');
                 const expandTextEn = expandColorsBtn.querySelector('.expand-text-en');
@@ -108,19 +93,10 @@ function setupAllEventListeners() {
         });
     }
     
-    // 設定モーダルの表示/非表示（デスクトップ: click イベント）
-    settingsBtn.addEventListener('click', () => {
-        settingsModal.classList.add('show');
-        updateActiveButtons();
-        updateExpandButtonVisibility();
-        stopRotation();
-    });
-    
     closeModal.addEventListener('click', () => {
         settingsModal.classList.remove('show');
     });
     
-    // 保存ボタン（閉じるボタンとして機能）
     saveSettings.addEventListener('click', () => {
         settingsModal.classList.remove('show');
     });
@@ -185,10 +161,8 @@ function setupAllEventListeners() {
         });
     }
     
-    // 初期表示を更新
     updatePrivacyLinkDisplay();
     
-    // 履歴消去ボタン
     const clearHistoryBtn = document.getElementById('clearHistoryBtn');
     if (clearHistoryBtn) {
         clearHistoryBtn.addEventListener('click', () => {
@@ -196,7 +170,6 @@ function setupAllEventListeners() {
         });
     }
     
-    // ファイルサイズの表示更新
     const fileSizeInput = document.getElementById('fileSize');
     const sizeUnitSelect = document.getElementById('sizeUnit');
     const sizeDisplay = document.getElementById('sizeDisplay');
@@ -206,7 +179,6 @@ function setupAllEventListeners() {
         sizeUnitSelect.addEventListener('change', updateSizeDisplay);
     }
     
-    // エンターキーで計算できるようにする
     const speedInput = document.getElementById('speed');
     const speedUnitSelect = document.getElementById('speedUnit');
     
@@ -221,7 +193,6 @@ function setupAllEventListeners() {
         });
     }
     
-    // 計算処理
     const form = document.getElementById('calculatorForm');
     if (form) {
         form.addEventListener('submit', (e) => {
@@ -230,17 +201,11 @@ function setupAllEventListeners() {
         });
     }
     
-    // JST時刻の更新
     updateJSTTime();
     setInterval(updateJSTTime, 1000);
     
-    // 初期化時にサイズ単位ボタンの状態を更新
     updateActiveButtons();
-    
-    // 初期化時に展開ボタンの表示を更新
     updateExpandButtonVisibility();
-    
-    // 履歴を表示
     updateHistoryDisplay();
 }
 
@@ -268,7 +233,6 @@ function addToHistory(calculation) {
     
     let history = getHistory();
     
-    // 重複チェック（ファイルサイズ、サイズ単位、速度、速度単位が同じ場合は重複とみなす）
     const isDuplicate = history.some(item => 
         item.fileSize === calculation.fileSize &&
         item.sizeUnit === calculation.sizeUnit &&
@@ -277,7 +241,6 @@ function addToHistory(calculation) {
     );
     
     if (isDuplicate) {
-        // 重複している場合は、既存の項目を削除して新しい項目を先頭に追加
         history = history.filter(item => 
             !(item.fileSize === calculation.fileSize &&
               item.sizeUnit === calculation.sizeUnit &&
@@ -286,10 +249,8 @@ function addToHistory(calculation) {
         );
     }
     
-    // 新しい項目を先頭に追加
     history.unshift(calculation);
     
-    // 最大5件まで
     if (history.length > 5) {
         history = history.slice(0, 5);
     }
@@ -385,7 +346,6 @@ function setupLanguageButtons() {
         btn.addEventListener('click', () => {
             const lang = btn.getAttribute('data-lang');
             updateLanguage(lang);
-            // ファイルサイズ表示を更新
             updateSizeDisplay();
         });
     });
@@ -394,7 +354,6 @@ function setupLanguageButtons() {
 function updateLanguage(lang) {
     currentLang = lang;
     
-    // 翻訳データが読み込まれていない場合は処理をスキップ
     if (!translations[lang]) {
         console.warn('翻訳データがまだ読み込まれていません:', lang);
         return;
@@ -416,7 +375,6 @@ function updateLanguage(lang) {
     document.getElementById('saveBtnText').textContent = t.saveBtn;
     document.getElementById('saveBtnTextEn').textContent = t.saveBtn;
     
-    // 履歴関連のテキストを更新
     const historyTitle = document.getElementById('historyTitle');
     const historyToggleLabel = document.getElementById('historyToggleLabel');
     const historyToggleDescription = document.getElementById('historyToggleDescription');
@@ -426,7 +384,6 @@ function updateLanguage(lang) {
     if (historyToggleDescription) historyToggleDescription.textContent = t.historyToggleDescription;
     if (clearHistoryBtn) clearHistoryBtn.setAttribute('aria-label', t.clearHistoryLabel);
     
-    // プライバシーリンク関連のテキストを更新
     const privacyLinkToggleLabel = document.getElementById('privacyLinkToggleLabel');
     const privacyLinkToggleDescription = document.getElementById('privacyLinkToggleDescription');
     const privacyLinkFooter = document.getElementById('privacyLinkFooter');
@@ -436,13 +393,10 @@ function updateLanguage(lang) {
     if (privacyLinkFooter) privacyLinkFooter.textContent = t.privacyPolicy;
     if (privacyLinkSettings) privacyLinkSettings.textContent = t.privacyPolicy;
     
-    // プライバシーリンクの表示を更新
     updatePrivacyLinkDisplay();
     
-    // タイトルを更新
     document.title = t.pageTitle;
     
-    // meta descriptionを更新
     const metaDescription = document.getElementById('metaDescription');
     if (metaDescription) {
         if (lang === 'en') {
@@ -452,7 +406,6 @@ function updateLanguage(lang) {
         }
     }
     
-    // もっと見るボタンのテキストを更新
     const expandTextJa = document.querySelector('.expand-text-ja');
     const expandTextEn = document.querySelector('.expand-text-en');
     if (expandTextJa && expandTextEn) {
@@ -469,12 +422,10 @@ function updateLanguage(lang) {
         }
     }
 
-    // 言語ボタンのアクティブ状態更新
     document.querySelectorAll('.lang-btn').forEach(btn => {
         btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
     });
 
-    // 設定モーダル内のテキスト切り替え
     if (lang === 'en') {
         document.querySelectorAll('.theme-text-light, .theme-text-dark, .theme-text-gray').forEach(el => el.style.display = 'none');
         document.querySelectorAll('.color-text-blue, .color-text-green, .color-text-purple, .color-text-orange, .color-text-red, .color-text-mono, .color-text-pastel-blue, .color-text-pastel-green, .color-text-pastel-yellow, .color-text-pastel-pink, .color-text-pink').forEach(el => el.style.display = 'none');
@@ -486,8 +437,6 @@ function updateLanguage(lang) {
     }
 
     setCookie('lang', lang);
-    
-    // 履歴表示を更新
     updateHistoryDisplay();
 }
 
@@ -507,8 +456,6 @@ function updatePrivacyLinkDisplay() {
 
 // アプリを初期化
 initializeApp();
-
-// 翻訳データ読み込み後に初期言語設定が行われる（loadTranslations内で実行）
 
 // Cookie管理関数
 function setCookie(name, value, days = 365) {
@@ -539,7 +486,7 @@ function startRotation() {
     const settingsBtn = document.getElementById('settingsBtn');
     if (!settingsBtn || isRotating) return;
     isRotating = true;
-    startTime = Date.now() - (rotationAngle / 360) * 2000; // 現在の角度から継続
+    startTime = Date.now() - (rotationAngle / 360) * 2000;
     settingsBtn.style.transition = 'none';
     
     function animate() {
@@ -560,18 +507,14 @@ function stopRotation() {
         cancelAnimationFrame(animationId);
     }
     
-    // 現在の角度を正規化（0-360度の範囲に）
     rotationAngle = rotationAngle % 360;
     if (rotationAngle < 0) rotationAngle += 360;
     
-    // 最も近い360度の倍数に調整
     const targetAngle = rotationAngle < 180 ? 0 : 360;
     
-    // ゆっくり止まるアニメーション
     settingsBtn.style.transition = 'transform 0.6s ease-out';
     settingsBtn.style.transform = `rotate(${targetAngle}deg)`;
     
-    // アニメーション完了後に角度をリセット
     setTimeout(() => {
         rotationAngle = targetAngle;
         settingsBtn.style.transition = 'background-color 0.2s ease, transform 0.6s ease-out';
@@ -582,11 +525,10 @@ function stopRotation() {
 let savedTheme = getCookie('theme') || 
                   (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
 let savedAccent = getCookie('accent') || 'mono';
-let sizeUnitBase = parseInt(getCookie('sizeUnitBase')) || 1000; // デフォルトは1000
-let historyEnabled = getCookie('historyEnabled') !== 'false'; // デフォルトはtrue
-let privacyLinkEnabled = getCookie('privacyLinkEnabled') !== 'false'; // デフォルトはtrue
+let sizeUnitBase = parseInt(getCookie('sizeUnitBase')) || 1000;
+let historyEnabled = getCookie('historyEnabled') !== 'false';
+let privacyLinkEnabled = getCookie('privacyLinkEnabled') !== 'false';
 
-// テーマとアクセントを適用（DOMContentLoaded前に実行可能）
 if (document.body) {
     document.body.setAttribute('data-theme', savedTheme);
     document.body.setAttribute('data-accent', savedAccent);
@@ -599,7 +541,6 @@ function updateExpandButtonVisibility() {
     if (window.innerWidth <= 480) {
         if (expandBtn) expandBtn.style.display = 'block';
         if (expandable) {
-            // モバイル時は展開可能な状態にするが、初期状態では折りたたみ
             if (!expandable.classList.contains('expanded')) {
                 expandable.style.display = 'grid';
             }
@@ -613,7 +554,6 @@ function updateExpandButtonVisibility() {
     }
 }
 
-// ウィンドウリサイズ時に展開ボタンの表示を更新
 window.addEventListener('resize', updateExpandButtonVisibility);
 
 // アクティブなボタンを更新
@@ -636,7 +576,6 @@ function updateActiveButtons() {
     });
 }
 
-// システムテーマの変更を監視
 window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
     if (!getCookie('theme')) {
         const newTheme = e.matches ? 'dark' : 'light';
@@ -701,27 +640,21 @@ function handleEnterKey() {
     const fileSize = parseFloat(fileSizeInput.value);
     const speed = parseFloat(speedInput.value);
     
-    // ファイルサイズが入力されていない場合
     if (!fileSize || fileSize <= 0) {
-        // 回線速度も入力されていない場合はポップアップ
         if (!speed || speed <= 0) {
             alert(translations[currentLang].alertInvalid);
             fileSizeInput.focus();
         } else {
-            // 回線速度は入力されているので、ファイルサイズにフォーカス
             fileSizeInput.focus();
         }
         return;
     }
     
-    // 回線速度が入力されていない場合
     if (!speed || speed <= 0) {
-        // ファイルサイズは入力されているので、回線速度にフォーカス
         speedInput.focus();
         return;
     }
     
-    // 両方入力されている場合は計算を実行
     calculateDownloadTime();
 }
 
@@ -762,7 +695,6 @@ function calculateDownloadTime() {
         return;
     }
 
-    // すべてをメガバイトに変換
     let fileSizeInMB;
     const base = sizeUnitBase;
     switch (sizeUnit) {
@@ -777,8 +709,6 @@ function calculateDownloadTime() {
             break;
     }
 
-    // 速度をMbpsに変換
-    // fix: 1000ベース（SI単位）を使用。1 Kbps = 0.001 Mbps、1 Gbps = 1000 Mbps
     let speedInMbps;
     switch (speedUnit) {
         case 'Kbps':
@@ -792,17 +722,12 @@ function calculateDownloadTime() {
             break;
     }
 
-    // MbpsをMB/sに変換 (1 Mbps = 0.125 MB/s)
     const speedInMBps = speedInMbps / 8;
-
-    // ダウンロード時間を秒で計算
     const timeInSeconds = fileSizeInMB / speedInMBps;
 
-    // 結果を表示
     displayResult(timeInSeconds);
     result.classList.add('show');
     
-    // 履歴に追加
     if (historyEnabled) {
         addToHistory({
             fileSize: fileSize,
