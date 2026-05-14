@@ -56,8 +56,31 @@ function setupAllEventListeners() {
         settingsBtn.addEventListener('mouseleave', stopRotation);
     }
 
-    // 設定ボタン: click 一本で PC・モバイル両対応
-    // CSS の touch-action: manipulation により 300ms 遅延なし・ダブルタップズームなし
+    // 設定ボタン: touchend で即時反応させモーダルを開く
+    // touchend は click より先に発火するため 300ms 遅延を完全に回避できる
+    // preventDefault() でその後の click イベントによる二重発火を防ぐ
+    settingsBtn.addEventListener('touchend', (e) => {
+        // タッチ移動量が大きい場合はスクロール操作として無視
+        const touch = e.changedTouches[0];
+        const startTouch = settingsBtn._touchStart;
+        if (startTouch) {
+            const dx = Math.abs(touch.clientX - startTouch.x);
+            const dy = Math.abs(touch.clientY - startTouch.y);
+            if (dx > 10 || dy > 10) return; // スクロール判定
+        }
+        e.preventDefault(); // 後続の click イベントをキャンセル
+        settingsModal.classList.add('show');
+        updateActiveButtons();
+        updateExpandButtonVisibility();
+        stopRotation();
+    }, { passive: false });
+
+    settingsBtn.addEventListener('touchstart', (e) => {
+        const touch = e.touches[0];
+        settingsBtn._touchStart = { x: touch.clientX, y: touch.clientY };
+    }, { passive: true });
+
+    // 設定ボタン: click は非タッチデバイス（デスクトップ）向けのフォールバック
     settingsBtn.addEventListener('click', () => {
         settingsModal.classList.add('show');
         updateActiveButtons();

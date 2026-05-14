@@ -559,6 +559,14 @@ h1 {
     transition: all 0.2s ease;
     font-weight: 500;
     white-space: nowrap;
+    /* タップ遅延・ダブルタップズームを排除 */
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    /* タップ領域を確保 */
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 @media (max-width: 480px) {
@@ -607,20 +615,28 @@ h1 {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 36px;
-    height: 36px;
-    min-width: 36px;
-    min-height: 36px;
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
+    /* タップ遅延・ダブルタップズームを排除 */
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    /* ユーザー選択を無効化してテキスト選択によるキャンセルを防止 */
+    user-select: none;
+    -webkit-user-select: none;
+    /* ポインタイベントを明示 */
+    pointer-events: auto;
 }
 
 @media (max-width: 480px) {
     .settings-btn {
-        font-size: 16px;
+        font-size: 18px;
         padding: 5px;
-        width: 32px;
-        height: 32px;
-        min-width: 32px;
-        min-height: 32px;
+        width: 44px;
+        height: 44px;
+        min-width: 44px;
+        min-height: 44px;
     }
 }
 
@@ -725,7 +741,9 @@ select:focus {
     transition: background-color 0.2s ease, transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
     
     /* 古い固定色の影を削除 */
-    box-shadow: none; 
+    box-shadow: none;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
 }
 
 /* アクセントカラーを継承した「柔らかい影」を擬似要素で作る */
@@ -849,6 +867,13 @@ select:focus {
     padding: 4px 8px;
     border-radius: 6px;
     transition: background-color 0.2s ease, color 0.2s ease;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    min-width: 44px;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 @media (hover: hover) {
@@ -912,11 +937,13 @@ select:focus {
     border-radius: 4px;
     transition: background-color 0.2s ease, color 0.2s ease;
     flex-shrink: 0;
-    width: 32px;
-    height: 32px;
+    width: 44px;
+    height: 44px;
     display: flex;
     align-items: center;
     justify-content: center;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
 }
 
 @media (hover: hover) {
@@ -1001,6 +1028,8 @@ select:focus {
     border-radius: 26px;
     border: 2px solid var(--border);
     box-sizing: border-box;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .toggle-slider:before {
@@ -1096,6 +1125,15 @@ body[data-theme="light"] .toggle-switch input:checked + .toggle-slider:before {
     color: var(--text-secondary);
     padding: 0;
     line-height: 1;
+    /* タップ領域を確保 */
+    width: 44px;
+    height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
 }
 
 @media (hover: hover) {
@@ -1120,6 +1158,9 @@ body[data-theme="light"] .toggle-switch input:checked + .toggle-slider:before {
     cursor: pointer;
     transition: background-color 0.2s ease, transform 0.1s ease;
     margin-left: 12px;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    min-height: 44px;
 }
 
 @media (hover: hover) {
@@ -1169,6 +1210,9 @@ body[data-theme="light"] .toggle-switch input:checked + .toggle-slider:before {
     transition: all 0.2s ease;
     font-size: 14px;
     text-align: center;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    min-height: 44px;
 }
 
 @media (hover: hover) {
@@ -1226,6 +1270,9 @@ body[data-theme="light"] .toggle-switch input:checked + .toggle-slider:before {
     margin-top: 8px;
     position: relative;
     overflow: hidden;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    min-height: 44px;
 }
 
 .expand-btn::before {
@@ -1361,6 +1408,12 @@ body[data-theme="light"] .toggle-switch input:checked + .toggle-slider:before {
     transition: all 0.2s ease;
     text-align: center;
     font-weight: 500;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 @media (hover: hover) {
@@ -1395,6 +1448,8 @@ body[data-theme="light"] .toggle-switch input:checked + .toggle-slider:before {
     transition: all 0.2s ease;
     line-height: 1;
     padding: 0;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .floating-close-btn:active {
@@ -1531,8 +1586,8 @@ body[data-theme="light"] .toggle-switch input:checked + .toggle-slider:before {
 
     .delete-history-item-btn {
         font-size: 20px;
-        width: 28px;
-        height: 28px;
+        width: 44px;
+        height: 44px;
         padding: 2px 6px;
     }
 
@@ -1642,4 +1697,3 @@ body[data-theme="light"] .toggle-switch input:checked + .toggle-slider:before {
         padding: 6px 10px;
     }
 }
-
