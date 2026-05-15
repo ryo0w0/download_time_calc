@@ -25,6 +25,7 @@
   "historyToggleLabel": "History Feature",
   "historyToggleDescription": "Save up to 5 history items on device",
   "clearHistoryLabel": "Clear History",
+  "clearHistoryText": "Clear All",
   "privacyLinkToggleTitle": "Privacy Policy",
   "privacyLinkToggleLabel": "Show Privacy Policy link in footer",
   "privacyLinkToggleDescription": "Show Privacy Policy link in footer",
