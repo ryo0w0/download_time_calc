@@ -402,10 +402,12 @@ function updateLanguage(lang) {
     const historyToggleLabel = document.getElementById('historyToggleLabel');
     const historyToggleDescription = document.getElementById('historyToggleDescription');
     const clearHistoryBtn = document.getElementById('clearHistoryBtn');
+    const clearHistoryBtnText = document.getElementById('clearHistoryBtnText');
     if (historyTitle) historyTitle.textContent = t.historyTitle;
     if (historyToggleLabel) historyToggleLabel.textContent = t.historyToggleLabel;
     if (historyToggleDescription) historyToggleDescription.textContent = t.historyToggleDescription;
     if (clearHistoryBtn) clearHistoryBtn.setAttribute('aria-label', t.clearHistoryLabel);
+    if (clearHistoryBtnText) clearHistoryBtnText.textContent = t.clearHistoryText;
     
     const privacyLinkToggleLabel = document.getElementById('privacyLinkToggleLabel');
     const privacyLinkToggleDescription = document.getElementById('privacyLinkToggleDescription');
