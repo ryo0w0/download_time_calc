@@ -29,5 +29,8 @@
   "privacyLinkToggleTitle": "プライバシーポリシー",
   "privacyLinkToggleLabel": "フッターにプライバシーポリシーリンクを表示",
   "privacyLinkToggleDescription": "フッターにプライバシーポリシーリンクを表示",
-  "privacyPolicy": "プライバシーポリシー"
+  "privacyPolicy": "プライバシーポリシー",
+  "historyStyleTitle": "履歴の表示スタイル",
+  "historyStyleSwipe": "スワイプ切り替え",
+  "historyStyleStack": "下に積み上げ"
 }

@@ -29,5 +29,8 @@
   "privacyLinkToggleTitle": "Privacy Policy",
   "privacyLinkToggleLabel": "Show Privacy Policy link in footer",
   "privacyLinkToggleDescription": "Show Privacy Policy link in footer",
-  "privacyPolicy": "Privacy Policy"
+  "privacyPolicy": "Privacy Policy",
+  "historyStyleTitle": "History Display Style",
+  "historyStyleSwipe": "Swipe",
+  "historyStyleStack": "Stack"
 }

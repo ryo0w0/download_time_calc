@@ -74,7 +74,7 @@
             </div>
         </div>
 
-        <!-- 履歴ブロック: デスクトップでは右カラム、モバイルではカード下に表示 -->
+        <!-- 履歴ブロック: デスクトップでは右カラム、モバイルではスワイプ or 下積み -->
         <div class="history" id="historyBlock" style="display: none;">
             <div class="history-header">
                 <h3 id="historyTitle">履歴</h3>
@@ -177,6 +177,21 @@
                         <input type="checkbox" id="historyToggle" checked>
                         <span class="toggle-slider"></span>
                     </label>
+                </div>
+            </div>
+
+            <!-- モバイル限定: 履歴表示スタイル設定 -->
+            <div class="setting-section mobile-only-setting" id="historyStyleSection">
+                <h3 id="historyStyleTitle">履歴の表示スタイル</h3>
+                <div class="theme-options">
+                    <button class="option-btn" data-history-style="swipe" id="historyStyleSwipeBtn">
+                        <span class="btn-text-ja">スワイプ切り替え</span>
+                        <span class="btn-text-en" style="display:none;">Swipe</span>
+                    </button>
+                    <button class="option-btn" data-history-style="stack" id="historyStyleStackBtn">
+                        <span class="btn-text-ja">下に積み上げ</span>
+                        <span class="btn-text-en" style="display:none;">Stack</span>
+                    </button>
                 </div>
             </div>
 
