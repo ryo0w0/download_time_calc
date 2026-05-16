@@ -1,23 +1,24 @@
 /* ===== モバイル スワイプ履歴レイアウト (768px未満) ===== */
 @media (max-width: 767px) {
-    /* スワイプコンテナ: オーバーフロー隠す */
+    /* スワイプコンテナ: オーバーフロー隐す */
     .swipe-container {
         overflow: hidden;
         position: relative;
         width: 100%;
     }
 
-    /* トラック: 2ページを横並び */
+    /* トラック: 2ページを横並び　ページ間に gap を設ける */
     .swipe-track {
         display: flex;
         width: 100%;
+        gap: 24px;
         will-change: transform;
     }
 
-    /* 各ページ: 幅100%で固定 */
+    /* 各ページ: gap 分も含めたトラック幅の 1/2 を叠りりに占有 */
     .swipe-page {
-        flex: 0 0 100%;
-        min-width: 100%;
+        flex: 0 0 calc(50% - 12px);
+        min-width: calc(50% - 12px);
         box-sizing: border-box;
     }
 
