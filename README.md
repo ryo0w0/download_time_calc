@@ -12,10 +12,13 @@ A simple, fast, and customizable web tool to calculate download time based on fi
 - Supports units: MB / GB / TB and Kbps / Mbps / Gbps
 - Configurable file size base (1GB = 1000MB or 1GB = 1024MB)
 - History log — stores up to 5 recent calculations locally
+- **Desktop:** 2-column layout — input form (left, sticky) + history panel (right, scrollable)
+- **Mobile:** Swipe UI — finger-tracking page transition between input and history (like a home screen)
+- History display style can be switched between Swipe and Stack in Settings (mobile only)
 - Theme switcher: Light, Dark, Gray Dark
 - 10+ accent color options (Mono, Blue, Green, Purple, Orange, Red, Pink, Cyan, Mint, Lemon, Rose)
 - Bilingual UI: Japanese / English
-- PWA support — installable on mobile and desktop
+- PWA support — installable on mobile and desktop, works offline
 - Responsive design, works on any device
 
 ## Usage
@@ -25,9 +28,11 @@ A simple, fast, and customizable web tool to calculate download time based on fi
 3. Click **Calculate** to see the estimated download time
 4. Open **Settings (⚙️)** to customize theme, accent color, size base, and history
 
+> On mobile, swipe left to view the history panel, or swipe right to return to the input form.
+
 ## Tech Stack
 
-- HTML / CSS / Vanilla JavaScript
+- HTML / CSS / Vanilla JavaScript (no frameworks, no dependencies)
 - PWA (Service Worker + Web App Manifest)
 - Google Analytics (gtag.js)
 
@@ -35,19 +40,23 @@ A simple, fast, and customizable web tool to calculate download time based on fi
 
 ```
 download_time_calc/
-├── index.html          # Main application page
-├── favicon.svg         # App icon
-├── manifest.json       # PWA manifest
+├── index.html              # Main application page
+├── favicon.svg             # App icon (SVG)
+├── manifest.json           # PWA manifest
 ├── css/
-│   └── style.css       # Styles
+│   ├── style.css           # Base styles, themes, components
+│   ├── layout-desktop.css  # 2-column desktop layout (768px+)
+│   └── swipe.css           # Mobile swipe UI (< 768px)
 ├── js/
-│   ├── main.js         # Application logic
-│   └── service-worker.js
-├── images/             # App icons (PWA)
+│   ├── main.js             # Application logic
+│   └── service-worker.js   # Offline caching
+├── data/
+│   ├── ja.json             # Japanese translations
+│   └── en.json             # English translations
+├── images/                 # PWA icons (192x192, 512x512, apple-touch-icon)
 ├── pages/
-│   └── privacy.html    # Privacy policy page
-├── data/               # Static data assets
-└── TASK_PROPOSALS.md   # Development task notes
+│   └── privacy.html        # Privacy policy
+└── TASK_PROPOSALS.md       # Development task notes
 ```
 
 ## License
@@ -74,10 +83,13 @@ This project does not currently specify a license.
 - 単位対応: MB / GB / TB、Kbps / Mbps / Gbps
 - ファイルサイズ基準の切り替え（1GB = 1000MB または 1GB = 1024MB）
 - 履歴機能 — 直近5件の計算結果をローカルに保存
+- **デスクトップ:** 2カラムレイアウト — 入力フォーム（左・sticky固定）＋ 履歴パネル（右・スクロール）
+- **モバイル:** スワイプUI — ホーム画面のように指に追従するページ切り替えで入力と履歴を行き来
+- 設定から履歴の表示スタイルをスワイプ / 下積み で切り替え可能（モバイルのみ）
 - テーマ切り替え: ライト / ダーク / グレーダーク
 - 10種類以上のアクセントカラー（モノクロ、ブルー、グリーン、パープル、オレンジ、レッド、ピンク、シアン、ミント、レモン、ローズ）
 - 日本語 / 英語の切り替えに対応
-- PWA対応 — スマートフォン・PCにインストール可能
+- PWA対応 — スマートフォン・PCにインストール可能、オフラインでも動作
 - レスポンシブデザイン対応
 
 ## 使い方
@@ -87,9 +99,11 @@ This project does not currently specify a license.
 3. **「計算する」**をクリックするとダウンロード時間が表示される
 4. 右上の **設定（⚙️）**からテーマ・アクセントカラー・サイズ基準・履歴機能をカスタマイズ可能
 
+> モバイルでは左にスワイプすると履歴パネルへ、右にスワイプすると入力フォームに戻ります。
+
 ## 使用技術
 
-- HTML / CSS / Vanilla JavaScript
+- HTML / CSS / Vanilla JavaScript（フレームワーク・依存ライブラリなし）
 - PWA（Service Worker + Web App Manifest）
 - Google Analytics（gtag.js）
 
@@ -97,19 +111,23 @@ This project does not currently specify a license.
 
 ```
 download_time_calc/
-├── index.html          # メインページ
-├── favicon.svg         # アプリアイコン
-├── manifest.json       # PWAマニフェスト
+├── index.html              # メインページ
+├── favicon.svg             # アプリアイコン（SVG）
+├── manifest.json           # PWAマニフェスト
 ├── css/
-│   └── style.css       # スタイルシート
+│   ├── style.css           # ベーススタイル・テーマ・コンポーネント
+│   ├── layout-desktop.css  # デスクトップ2カラムレイアウト（768px以上）
+│   └── swipe.css           # モバイルスワイプUI（768px未満）
 ├── js/
-│   ├── main.js         # アプリケーションロジック
-│   └── service-worker.js
-├── images/             # アプリアイコン（PWA用）
+│   ├── main.js             # アプリケーションロジック
+│   └── service-worker.js   # オフラインキャッシュ
+├── data/
+│   ├── ja.json             # 日本語翻訳
+│   └── en.json             # 英語翻訳
+├── images/                 # PWAアイコン（192x192, 512x512, apple-touch-icon）
 ├── pages/
-│   └── privacy.html    # プライバシーポリシー
-├── data/               # 静的データ
-└── TASK_PROPOSALS.md   # 開発タスクメモ
+│   └── privacy.html        # プライバシーポリシー
+└── TASK_PROPOSALS.md       # 開発タスクメモ
 ```
 
 ## ライセンス
