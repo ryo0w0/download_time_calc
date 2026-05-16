@@ -30,10 +30,14 @@
 }
 
 :root {
+    /* レイアウト共通変数 */
+    --sticky-top: 60px;
+
     /* ライトモード */
     --light-bg-primary: #ffffff;
     --light-bg-secondary: #f5f5f5;
     --light-bg-card: #ffffff;
+    --light-bg-hover: #eeeeee;
     --light-text-primary: #212121;
     --light-text-secondary: #757575;
     --light-border: #e0e0e0;
@@ -43,6 +47,7 @@
     --dark-bg-primary: #121212;
     --dark-bg-secondary: #1e1e1e;
     --dark-bg-card: #1e1e1e;
+    --dark-bg-hover: #2a2a2a;
     --dark-text-primary: #ffffff;
     --dark-text-secondary: #b0b0b0;
     --dark-border: #333333;
@@ -52,6 +57,7 @@
     --pure-dark-bg-primary: #000000;
     --pure-dark-bg-secondary: #0a0a0a;
     --pure-dark-bg-card: #0a0a0a;
+    --pure-dark-bg-hover: #1a1a1a;
     --pure-dark-text-primary: #ffffff;
     --pure-dark-text-secondary: #a0a0a0;
     --pure-dark-border: #1a1a1a;
@@ -131,6 +137,7 @@ body[data-theme="light"] {
     --bg-primary: var(--light-bg-primary);
     --bg-secondary: var(--light-bg-secondary);
     --bg-card: var(--light-bg-card);
+    --bg-hover: var(--light-bg-hover);
     --text-primary: var(--light-text-primary);
     --text-secondary: var(--light-text-secondary);
     --border: var(--light-border);
@@ -142,6 +149,7 @@ body[data-theme="dark"] {
     --bg-primary: var(--dark-bg-primary);
     --bg-secondary: var(--dark-bg-secondary);
     --bg-card: var(--dark-bg-card);
+    --bg-hover: var(--dark-bg-hover);
     --text-primary: var(--dark-text-primary);
     --text-secondary: var(--dark-text-secondary);
     --border: var(--dark-border);
@@ -153,6 +161,7 @@ body[data-theme="pure-dark"] {
     --bg-primary: var(--pure-dark-bg-primary);
     --bg-secondary: var(--pure-dark-bg-secondary);
     --bg-card: var(--pure-dark-bg-card);
+    --bg-hover: var(--pure-dark-bg-hover);
     --text-primary: var(--pure-dark-text-primary);
     --text-secondary: var(--pure-dark-text-secondary);
     --border: var(--pure-dark-border);

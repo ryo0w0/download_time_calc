@@ -10,61 +10,64 @@
     /* body: 水平・垂直両方のセンタリングを維持しつつ上下に余白 */
     body {
         align-items: flex-start;
-        padding-top: 60px;
-        padding-bottom: 60px;
+        padding-top: var(--sticky-top);
+        padding-bottom: var(--sticky-top);
     }
 
     /*
      * コンテナ基本: 履歴なし状態
-     * - 全幅を不要なスペースなしで max-width に博る
-     * - 左右中央: margin: 0 auto
      * - 1カラム（履歴非表示時のデフォルト）
      */
     .container {
         max-width: 520px;
         width: 100%;
         margin: 0 auto;
-        display: block; /* 履歴ブロックが非表示の時は通常ブロック */
+        display: block;
     }
 
     /*
      * 履歴表示時: 2カラムグリッドに切り替え
-     * :has() で #historyBlock が表示状態の時だけ適用
+     * data-history-visible 属性で制御（JS側で付与・削除）
      */
-    .container:has(#historyBlock:not([style*="display: none"])) {
+    .container[data-history-visible="true"] {
         max-width: 960px;
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 5fr 4fr;
         gap: 24px;
         align-items: start;
     }
 
-    /* 左カラム: カードを固定 */
+    /* 左カラム: カードをsticky固定 */
     .container > .card {
         grid-column: 1;
         grid-row: 1;
         position: sticky;
-        top: 60px;
+        top: var(--sticky-top);
     }
 
     /* 右カラム: 履歴ブロック */
-    .history {
-        grid-column: 2;
-        grid-row: 1;
-        margin-top: 0 !important;
+    #historyBlock > .history {
+        margin-top: 0;
         border-radius: 16px;
         box-shadow: 0 4px 20px var(--shadow);
-        background-color: var(--bg-card) !important;
+        background-color: var(--bg-card);
         padding: 24px;
-        max-height: calc(100vh - 120px);
+        max-height: calc(100dvh - calc(var(--sticky-top) * 2));
         overflow-y: auto;
     }
 
+    /* デスクトップでは #historyBlock 自体のマージンは不要 */
+    #historyBlock {
+        grid-column: 2;
+        grid-row: 1;
+        margin-top: 0;
+    }
+
     /* 履歴ヘッダー */
-    .history .history-header h3 {
+    #historyBlock .history-header h3 {
         font-size: 18px;
         font-weight: 600;
-        color: var(--text-primary) !important;
+        color: var(--text-primary);
     }
 
     .history-list {
@@ -76,11 +79,18 @@
     }
 }
 
-/* 中間サイズ（768px〜1024px）: 左右に適度なパディング */
+/* タブレット（768px〜1024px）: パディングとgapを調整 */
 @media (min-width: 768px) and (max-width: 1024px) {
-    .container:has(#historyBlock:not([style*="display: none"])) {
+    .container[data-history-visible="true"] {
         max-width: 100%;
-        padding-inline: 24px;
+        padding-inline: 20px;
         gap: 16px;
+        /* タブレットでは比率を均等に近づける */
+        grid-template-columns: 1fr 1fr;
+    }
+
+    /* タブレットでは select の min-width を緩める */
+    select {
+        min-width: 100px;
     }
 }
