@@ -1,29 +1,25 @@
 /* ===== モバイル スワイプ履歴レイアウト (768px未満) ===== */
 @media (max-width: 767px) {
     /*
-     * body の padding をスワイプ時に打ち消す。
-     * スワイプコンテナは viewport 幅いっぱいに広げ、
-     * 各ページ内側に padding を持たせることでカードが見切れるのを防ぐ。
+     * スワイプコンテナだけ viewport 幅いっぱいに展開。
+     * body / .container の padding は触らず、負マージン + padding の返しでカード内側の余白を維持。
+     *
+     * 構造:
+     *   body (padding: 20px)
+     *     .container (max-width: 600px)
+     *       .card           ← paddingあり、そのまま
+     *       .swipe-container ← 負マージンで viewport 幅に
+     *         .swipe-track
+     *           .swipe-page  ← paddingで内側の余白を返す
+     *             .history
      */
-    body {
-        padding-left: 0;
-        padding-right: 0;
-        /* 上下 padding はそのまま維持 */
-    }
-
-    /* .container はページ内 padding で制御するため幅制限を解除 */
-    .container {
-        max-width: 100%;
-    }
-
-    /* スワイプコンテナ: viewport 幅いっぱいに展開、はみ出しを隠す */
     .swipe-container {
         overflow: hidden;
         position: relative;
-        width: 100vw;
-        /* body の左右 padding 分だけ左にオフセットして viewport 端に揃える */
+        /* 左右を viewport 端に張る: body・containerの左右 padding 分をキャンセル */
         margin-left: calc(-1 * var(--swipe-body-px, 20px));
         margin-right: calc(-1 * var(--swipe-body-px, 20px));
+        width: calc(100% + 2 * var(--swipe-body-px, 20px));
     }
 
     /* トラック: 各ページを横並び */
@@ -33,17 +29,17 @@
         will-change: transform;
     }
 
-    /* 各ページ: viewport 幅 100% を占有 */
+    /* 各ページ: コンテナ幅 100% を占有 */
     .swipe-page {
         flex: 0 0 100%;
         min-width: 100%;
         box-sizing: border-box;
-        /* 左右に padding を持たせてカードが端に張り付かないようにする */
+        /* 負マージン分の余白を内側で返す */
         padding-left: var(--swipe-body-px, 20px);
         padding-right: var(--swipe-body-px, 20px);
     }
 
-    /* 2ページ目（履歴ページ）のページ間隙間 */
+    /* 2ページ目（履歴）: ページ間に少し追加の限内間隙 */
     .swipe-page:nth-child(2) {
         padding-left: calc(var(--swipe-body-px, 20px) + 8px);
     }
