@@ -108,7 +108,7 @@ function buildSwipeContainer() {
 
     swipeCurrentPage = 0;
     updateSwipePage(0, false);
-    setupSwipeEvents(swipeTrack);
+    setupSwipeEvents();
 }
 
 function destroySwipeContainer() {
@@ -126,6 +126,9 @@ function destroySwipeContainer() {
 
     swipeContainer.remove();
     container.classList.remove('swipe-ready');
+
+    // document レベルのスワイプリスナーを解除
+    teardownSwipeEvents();
 }
 
 function updateSwipePage(page, animate = true) {
@@ -140,69 +143,103 @@ function updateSwipePage(page, animate = true) {
     });
 }
 
-function setupSwipeEvents(track) {
+// ---- document レベルのスワイプ管理 ----
+let _swipeHandlers = null;
+
+function teardownSwipeEvents() {
+    if (!_swipeHandlers) return;
+    document.removeEventListener('touchstart', _swipeHandlers.start, { passive: true });
+    document.removeEventListener('touchmove',  _swipeHandlers.move,  { passive: false });
+    document.removeEventListener('touchend',   _swipeHandlers.end,   { passive: true });
+    document.removeEventListener('touchcancel',_swipeHandlers.cancel,{ passive: true });
+    _swipeHandlers = null;
+}
+
+function setupSwipeEvents() {
+    // 既存リスナーがあれば先に解除
+    teardownSwipeEvents();
+
     let startX = 0;
     let startY = 0;
     let currentX = 0;
     let isDragging = false;
-    let startedOnInput = false;
     let isHorizontal = null; // null=未確定, true=横, false=縦
     const THRESHOLD = 40;    // ページ切替の判定距離 (px)
     const TOTAL_PAGES = 2;
 
+    function getTrack() {
+        return document.querySelector('.swipe-track');
+    }
+
     function getBaseOffset() {
-        return -swipeCurrentPage * 100; // %単位のベースオフセット
+        return -swipeCurrentPage * 100;
     }
 
     function setTrackX(pct, withTransition = false) {
+        const track = getTrack();
+        if (!track) return;
         track.style.transition = withTransition
             ? 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
             : 'none';
         track.style.transform = `translateX(${pct}%)`;
     }
 
-    track.addEventListener('touchstart', (e) => {
+    // スワイプを無視すべき状況か判定
+    function shouldIgnore(e) {
+        // スワイプUI が存在しないとき
+        if (!getTrack()) return true;
+        // モーダルが開いているとき
+        if (document.getElementById('settingsModal')?.classList.contains('show')) return true;
+        // input / select / textarea にフォーカスが当たっているとき
+        const active = document.activeElement;
+        if (active && (active.tagName === 'INPUT' || active.tagName === 'SELECT' || active.tagName === 'TEXTAREA')) return true;
+        // タッチ開始点が input / select / button / textarea のとき
         const el = e.target;
-        if (el.tagName === 'INPUT' || el.tagName === 'SELECT' || el.tagName === 'BUTTON') {
-            startedOnInput = true;
+        if (el.tagName === 'INPUT' || el.tagName === 'SELECT' || el.tagName === 'TEXTAREA') return true;
+        return false;
+    }
+
+    const onStart = (e) => {
+        if (shouldIgnore(e)) {
+            isDragging = false;
             return;
         }
-        startedOnInput = false;
         isHorizontal = null;
         startX = e.touches[0].clientX;
         startY = e.touches[0].clientY;
         currentX = startX;
         isDragging = true;
+        const track = getTrack();
+        if (track) track.style.transition = 'none';
+    };
 
-        // ドラッグ開始時はトランジション無効化して即応
-        track.style.transition = 'none';
-    }, { passive: true });
-
-    track.addEventListener('touchmove', (e) => {
-        if (!isDragging || startedOnInput) return;
+    const onMove = (e) => {
+        if (!isDragging) return;
 
         const dx = e.touches[0].clientX - startX;
         const dy = e.touches[0].clientY - startY;
 
-        // 方向が未確定なら判定する
         if (isHorizontal === null) {
-            if (Math.abs(dx) < 5 && Math.abs(dy) < 5) return; // まだ判定しない
+            if (Math.abs(dx) < 5 && Math.abs(dy) < 5) return;
             isHorizontal = Math.abs(dx) > Math.abs(dy);
         }
 
-        // 縦スクロールと判定されたら何もしない
         if (!isHorizontal) return;
 
+        // 横スワイプと確定したのでページスクロールを止める
+        e.preventDefault();
+
         currentX = e.touches[0].clientX;
+        const track = getTrack();
+        if (!track) return;
         const trackWidth = track.parentElement.offsetWidth;
         if (trackWidth === 0) return;
 
-        // 指の移動量をパーセンテージに変換
         const dragPct = ((currentX - startX) / trackWidth) * 100;
         const basePct = getBaseOffset();
         let newPct = basePct + dragPct;
 
-        // 端でゴムバンド抵抗: 範囲外は 1/3 の動きに
+        // 端でゴムバンド抵抗
         const minPct = -(TOTAL_PAGES - 1) * 100;
         const maxPct = 0;
         if (newPct > maxPct) {
@@ -212,51 +249,54 @@ function setupSwipeEvents(track) {
         }
 
         setTrackX(newPct);
-    }, { passive: true });
+    };
 
-    track.addEventListener('touchend', (e) => {
-        if (!isDragging || startedOnInput) {
-            isDragging = false;
-            return;
-        }
+    const onEnd = (e) => {
+        if (!isDragging) return;
         isDragging = false;
 
         if (!isHorizontal) return;
 
-        const trackWidth = track.parentElement.offsetWidth;
         const dx = e.changedTouches[0].clientX - startX;
         const dy = e.changedTouches[0].clientY - startY;
 
-        // 縦方向が大きければページ切替しない
         if (Math.abs(dy) > Math.abs(dx)) {
             setTrackX(getBaseOffset(), true);
             return;
         }
 
         if (dx < -THRESHOLD && swipeCurrentPage < TOTAL_PAGES - 1) {
-            // 右→左: 次ページへ
             swipeCurrentPage++;
         } else if (dx > THRESHOLD && swipeCurrentPage > 0) {
-            // 左→右: 前ページへ
             swipeCurrentPage--;
         }
-        // THRESHOLDに届かなければ現在ページに戻す
 
-        // トランジション付きでスナップ
-        track.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
-        track.style.transform = `translateX(${getBaseOffset()}%)`;
+        const track = getTrack();
+        if (track) {
+            track.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+            track.style.transform = `translateX(${getBaseOffset()}%)`;
+        }
 
         document.querySelectorAll('.swipe-dot').forEach((dot, i) => {
             dot.classList.toggle('active', i === swipeCurrentPage);
         });
-    }, { passive: true });
+    };
 
-    // touchcancel: 中断時も現在ページにスナップ
-    track.addEventListener('touchcancel', () => {
+    const onCancel = () => {
         if (!isDragging) return;
         isDragging = false;
         setTrackX(getBaseOffset(), true);
-    }, { passive: true });
+    };
+
+    // document 全体にリスナーを登録
+    // touchmove だけ passive:false（e.preventDefault() を呼ぶため）
+    document.addEventListener('touchstart',  onStart,  { passive: true });
+    document.addEventListener('touchmove',   onMove,   { passive: false });
+    document.addEventListener('touchend',    onEnd,    { passive: true });
+    document.addEventListener('touchcancel', onCancel, { passive: true });
+
+    // 後で解除できるよう参照を保持
+    _swipeHandlers = { start: onStart, move: onMove, end: onEnd, cancel: onCancel };
 }
 
 function setupAllEventListeners() {
