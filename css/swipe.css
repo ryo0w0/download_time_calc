@@ -1,0 +1,64 @@
+/* ===== モバイル スワイプ履歴レイアウト (768px未満) ===== */
+@media (max-width: 767px) {
+    /* スワイプコンテナ: オーバーフロー隠す */
+    .swipe-container {
+        overflow: hidden;
+        position: relative;
+        width: 100%;
+    }
+
+    /* トラック: 2ページを横並び */
+    .swipe-track {
+        display: flex;
+        width: 100%;
+        will-change: transform;
+    }
+
+    /* 各ページ: 幅100%で固定 */
+    .swipe-page {
+        flex: 0 0 100%;
+        min-width: 100%;
+        box-sizing: border-box;
+    }
+
+    /* 履歴ブロックをスワイプページ内でカードと同スタイルに */
+    .swipe-page .history {
+        margin-top: 0;
+    }
+
+    /* ドットナビゲーション */
+    .swipe-dots {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 0 6px;
+    }
+
+    .swipe-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: var(--border);
+        transition: background-color 0.25s ease, transform 0.25s ease;
+        flex-shrink: 0;
+    }
+
+    .swipe-dot.active {
+        background-color: var(--accent);
+        transform: scale(1.25);
+    }
+}
+
+/* デスクトップではスワイプUI非表示 (念のため) */
+@media (min-width: 768px) {
+    .swipe-container,
+    .swipe-track,
+    .swipe-page,
+    .swipe-dots {
+        display: contents;
+    }
+    .swipe-dots {
+        display: none !important;
+    }
+}

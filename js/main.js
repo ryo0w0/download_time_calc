@@ -13,14 +13,12 @@ async function loadTranslations() {
             ja: jaData,
             en: enData
         };
-        // 翻訳データ読み込み後に初期化
         updateLanguage(currentLang);
     } catch (error) {
         console.error('翻訳データの読み込みに失敗しました:', error);
     }
 }
 
-// ページ読み込み時に翻訳データを読み込む
 function initializeApp() {
     function init() {
         loadTranslations().then(() => {
@@ -36,7 +34,151 @@ function initializeApp() {
     }
 }
 
-// 全てのイベントリスナーを設定
+// モバイル判定（768px未満）
+function isMobile() {
+    return window.innerWidth < 768;
+}
+
+// 履歴表示スタイル (swipe / stack)
+let historyStyle = getCookie('historyStyle') || 'swipe';
+
+// スワイプ状態
+let swipeCurrentPage = 0; // 0=入力, 1=履歴
+
+function applyHistoryStyle() {
+    if (!isMobile()) return; // デスクトップは何もしない
+
+    const container = document.querySelector('.container');
+    if (!container) return;
+
+    const history = getHistory();
+
+    // 履歴がない or 無効時はスワイプ構造を解除
+    if (!historyEnabled || history.length === 0) {
+        destroySwipeContainer();
+        return;
+    }
+
+    if (historyStyle === 'swipe') {
+        buildSwipeContainer();
+    } else {
+        destroySwipeContainer();
+        const historyBlock = document.getElementById('historyBlock');
+        if (historyBlock) historyBlock.style.display = 'block';
+    }
+}
+
+function buildSwipeContainer() {
+    const container = document.querySelector('.container');
+    if (!container) return;
+
+    // 既にスワイプコンテナ構築済みならスキップ
+    if (container.classList.contains('swipe-ready')) return;
+
+    const card = container.querySelector('.card');
+    const historyBlock = document.getElementById('historyBlock');
+    if (!card || !historyBlock) return;
+
+    // ラッパー構築
+    const swipeContainer = document.createElement('div');
+    swipeContainer.className = 'swipe-container';
+
+    const swipeTrack = document.createElement('div');
+    swipeTrack.className = 'swipe-track';
+
+    // page-0: 入力カード
+    const page0 = document.createElement('div');
+    page0.className = 'swipe-page';
+    page0.appendChild(card);
+
+    // page-1: 履歴
+    const page1 = document.createElement('div');
+    page1.className = 'swipe-page';
+    page1.appendChild(historyBlock);
+    historyBlock.style.display = 'block';
+    historyBlock.style.margin = '0';
+
+    swipeTrack.appendChild(page0);
+    swipeTrack.appendChild(page1);
+    swipeContainer.appendChild(swipeTrack);
+
+    // ドットナビ
+    const dots = document.createElement('div');
+    dots.className = 'swipe-dots';
+    dots.id = 'swipeDots';
+    dots.innerHTML = '<span class="swipe-dot active"></span><span class="swipe-dot"></span>';
+    swipeContainer.appendChild(dots);
+
+    container.appendChild(swipeContainer);
+    container.classList.add('swipe-ready');
+
+    swipeCurrentPage = 0;
+    updateSwipePage(0, false);
+    setupSwipeEvents(swipeTrack);
+}
+
+function destroySwipeContainer() {
+    const container = document.querySelector('.container');
+    if (!container || !container.classList.contains('swipe-ready')) return;
+
+    const swipeContainer = container.querySelector('.swipe-container');
+    if (!swipeContainer) return;
+
+    const card = swipeContainer.querySelector('.card');
+    const historyBlock = document.getElementById('historyBlock');
+
+    // DOM を元に戻す
+    if (card) container.insertBefore(card, swipeContainer);
+    if (historyBlock) container.insertBefore(historyBlock, swipeContainer);
+
+    swipeContainer.remove();
+    container.classList.remove('swipe-ready');
+}
+
+function updateSwipePage(page, animate = true) {
+    const track = document.querySelector('.swipe-track');
+    if (!track) return;
+    swipeCurrentPage = page;
+    track.style.transition = animate ? 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)' : 'none';
+    track.style.transform = `translateX(${-page * 100}%)`;
+
+    document.querySelectorAll('.swipe-dot').forEach((dot, i) => {
+        dot.classList.toggle('active', i === page);
+    });
+}
+
+function setupSwipeEvents(track) {
+    let startX = 0, startY = 0, isDragging = false, startedOnInput = false;
+    const THRESHOLD = 50;
+
+    track.addEventListener('touchstart', (e) => {
+        const el = e.target;
+        if (el.tagName === 'INPUT' || el.tagName === 'SELECT' || el.tagName === 'BUTTON') {
+            startedOnInput = true;
+            return;
+        }
+        startedOnInput = false;
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
+        isDragging = true;
+    }, { passive: true });
+
+    track.addEventListener('touchend', (e) => {
+        if (!isDragging || startedOnInput) return;
+        isDragging = false;
+        const dx = e.changedTouches[0].clientX - startX;
+        const dy = e.changedTouches[0].clientY - startY;
+
+        if (Math.abs(dy) > Math.abs(dx)) return;
+
+        if (dx < -THRESHOLD && swipeCurrentPage === 0) {
+            updateSwipePage(1);
+        } else if (dx > THRESHOLD && swipeCurrentPage === 1) {
+            updateSwipePage(0);
+        }
+    }, { passive: true });
+}
+
 function setupAllEventListeners() {
     const body = document.body;
     const settingsBtn = document.getElementById('settingsBtn');
@@ -49,29 +191,24 @@ function setupAllEventListeners() {
         return;
     }
     
-    // 設定ボタン: デスクトップのみ回転アニメーション（hover が使える環境だけ）
-    // モバイルでは hover イベントが信頼性低いため skip
     if (window.matchMedia('(hover: hover)').matches) {
         settingsBtn.addEventListener('mouseenter', startRotation);
         settingsBtn.addEventListener('mouseleave', stopRotation);
     }
 
-    // 設定ボタン: touchend で即時反応させモーダルを開く
-    // touchend は click より先に発火するため 300ms 遅延を完全に回避できる
-    // preventDefault() でその後の click イベントによる二重発火を防ぐ
     settingsBtn.addEventListener('touchend', (e) => {
-        // タッチ移動量が大きい場合はスクロール操作として無視
         const touch = e.changedTouches[0];
         const startTouch = settingsBtn._touchStart;
         if (startTouch) {
             const dx = Math.abs(touch.clientX - startTouch.x);
             const dy = Math.abs(touch.clientY - startTouch.y);
-            if (dx > 10 || dy > 10) return; // スクロール判定
+            if (dx > 10 || dy > 10) return;
         }
-        e.preventDefault(); // 後続の click イベントをキャンセル
+        e.preventDefault();
         settingsModal.classList.add('show');
         updateActiveButtons();
         updateExpandButtonVisibility();
+        updateHistoryStyleButtons();
         stopRotation();
     }, { passive: false });
 
@@ -80,15 +217,14 @@ function setupAllEventListeners() {
         settingsBtn._touchStart = { x: touch.clientX, y: touch.clientY };
     }, { passive: true });
 
-    // 設定ボタン: click は非タッチデバイス（デスクトップ）向けのフォールバック
     settingsBtn.addEventListener('click', () => {
         settingsModal.classList.add('show');
         updateActiveButtons();
         updateExpandButtonVisibility();
+        updateHistoryStyleButtons();
         stopRotation();
     });
     
-    // 展開ボタンのクリックイベント
     const expandColorsBtn = document.getElementById('expandColorsBtn');
     const colorOptionsExpandable = document.getElementById('colorOptionsExpandable');
     if (expandColorsBtn && colorOptionsExpandable) {
@@ -130,7 +266,6 @@ function setupAllEventListeners() {
         }
     });
     
-    // テーマ変更（即座に適用・保存）
     document.querySelectorAll('.option-btn[data-theme]').forEach(btn => {
         btn.addEventListener('click', () => {
             const theme = btn.getAttribute('data-theme');
@@ -141,7 +276,6 @@ function setupAllEventListeners() {
         });
     });
     
-    // アクセントカラー変更（即座に適用・保存）
     document.querySelectorAll('.option-btn[data-color]').forEach(btn => {
         btn.addEventListener('click', () => {
             const color = btn.getAttribute('data-color');
@@ -152,7 +286,6 @@ function setupAllEventListeners() {
         });
     });
     
-    // サイズ単位変更（即座に適用・保存）
     document.querySelectorAll('.option-btn[data-size-unit]').forEach(btn => {
         btn.addEventListener('click', () => {
             sizeUnitBase = parseInt(btn.getAttribute('data-size-unit'));
@@ -161,19 +294,29 @@ function setupAllEventListeners() {
             updateSizeDisplay();
         });
     });
+
+    // 履歴表示スタイル切り替え
+    document.querySelectorAll('.option-btn[data-history-style]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            historyStyle = btn.getAttribute('data-history-style');
+            setCookie('historyStyle', historyStyle);
+            updateHistoryStyleButtons();
+            destroySwipeContainer();
+            updateHistoryDisplay();
+        });
+    });
     
-    // 履歴機能のトグル
     const historyToggle = document.getElementById('historyToggle');
     if (historyToggle) {
         historyToggle.checked = historyEnabled;
         historyToggle.addEventListener('change', (e) => {
             historyEnabled = e.target.checked;
             setCookie('historyEnabled', historyEnabled);
+            destroySwipeContainer();
             updateHistoryDisplay();
         });
     }
     
-    // プライバシーリンク表示のトグル
     const privacyLinkToggle = document.getElementById('privacyLinkToggle');
     if (privacyLinkToggle) {
         privacyLinkToggle.checked = privacyLinkEnabled;
@@ -224,12 +367,37 @@ function setupAllEventListeners() {
         });
     }
     
+    // リサイズ時にレイアウト再適用
+    window.addEventListener('resize', () => {
+        updateExpandButtonVisibility();
+        if (!isMobile()) {
+            destroySwipeContainer();
+        } else {
+            const hist = getHistory();
+            if (historyEnabled && hist.length > 0 && historyStyle === 'swipe') {
+                buildSwipeContainer();
+            }
+        }
+    });
+    
     updateJSTTime();
     setInterval(updateJSTTime, 1000);
     
     updateActiveButtons();
     updateExpandButtonVisibility();
+    updateHistoryStyleButtons();
     updateHistoryDisplay();
+}
+
+// 履歴スタイルボタンのアクティブ状態更新
+function updateHistoryStyleButtons() {
+    document.querySelectorAll('.option-btn[data-history-style]').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-history-style') === historyStyle);
+    });
+    const section = document.getElementById('historyStyleSection');
+    if (section) {
+        section.style.display = isMobile() ? 'block' : 'none';
+    }
 }
 
 // 履歴機能（localStorage を使用）
@@ -284,6 +452,7 @@ function addToHistory(calculation) {
 
 function clearHistory() {
     saveHistory([]);
+    destroySwipeContainer();
     updateHistoryDisplay();
 }
 
@@ -309,6 +478,7 @@ function deleteHistoryItem(index) {
     let history = getHistory();
     history.splice(index, 1);
     saveHistory(history);
+    if (history.length === 0) destroySwipeContainer();
     updateHistoryDisplay();
 }
 
@@ -330,7 +500,6 @@ function updateHistoryDisplay() {
         return;
     }
     
-    historyBlock.style.display = 'block';
     historyList.innerHTML = '';
     
     history.forEach((item, index) => {
@@ -361,6 +530,13 @@ function updateHistoryDisplay() {
         
         historyList.appendChild(historyItem);
     });
+
+    // モバイルの場合はスワイプ構造を適用
+    if (isMobile()) {
+        applyHistoryStyle();
+    } else {
+        historyBlock.style.display = 'block';
+    }
 }
 
 // 言語切り替えボタンの設定
@@ -408,6 +584,17 @@ function updateLanguage(lang) {
     if (historyToggleDescription) historyToggleDescription.textContent = t.historyToggleDescription;
     if (clearHistoryBtn) clearHistoryBtn.setAttribute('aria-label', t.clearHistoryLabel);
     if (clearHistoryBtnText) clearHistoryBtnText.textContent = t.clearHistoryText;
+
+    const historyStyleTitle = document.getElementById('historyStyleTitle');
+    if (historyStyleTitle) historyStyleTitle.textContent = t.historyStyleTitle;
+    const swipeBtn = document.getElementById('historyStyleSwipeBtn');
+    const stackBtn = document.getElementById('historyStyleStackBtn');
+    if (swipeBtn) {
+        swipeBtn.querySelector('.btn-text-ja').textContent = t.historyStyleSwipe;
+    }
+    if (stackBtn) {
+        stackBtn.querySelector('.btn-text-ja').textContent = t.historyStyleStack;
+    }
     
     const privacyLinkToggleLabel = document.getElementById('privacyLinkToggleLabel');
     const privacyLinkToggleDescription = document.getElementById('privacyLinkToggleDescription');
@@ -455,17 +642,20 @@ function updateLanguage(lang) {
         document.querySelectorAll('.theme-text-light, .theme-text-dark, .theme-text-gray').forEach(el => el.style.display = 'none');
         document.querySelectorAll('.color-text-blue, .color-text-green, .color-text-purple, .color-text-orange, .color-text-red, .color-text-mono, .color-text-pastel-blue, .color-text-pastel-green, .color-text-pastel-yellow, .color-text-pastel-pink, .color-text-pink').forEach(el => el.style.display = 'none');
         document.querySelectorAll('.theme-text-en, .color-text-en').forEach(el => el.style.display = 'inline');
+        document.querySelectorAll('.btn-text-ja').forEach(el => el.style.display = 'none');
+        document.querySelectorAll('.btn-text-en').forEach(el => el.style.display = 'inline');
     } else {
         document.querySelectorAll('.theme-text-light, .theme-text-dark, .theme-text-gray').forEach(el => el.style.display = 'inline');
         document.querySelectorAll('.color-text-blue, .color-text-green, .color-text-purple, .color-text-orange, .color-text-red, .color-text-mono, .color-text-pastel-blue, .color-text-pastel-green, .color-text-pastel-yellow, .color-text-pastel-pink, .color-text-pink').forEach(el => el.style.display = 'inline');
-        document.querySelectorAll('.theme-text-en, .color-text-en').forEach(el => el.style.display = 'none');
+        document.querySelectorAll('.theme-text-en, .color-text-en').forEach(el => el.style.display = 'none';
+        document.querySelectorAll('.btn-text-ja').forEach(el => el.style.display = 'inline');
+        document.querySelectorAll('.btn-text-en').forEach(el => el.style.display = 'none');
     }
 
     setCookie('lang', lang);
     updateHistoryDisplay();
 }
 
-// プライバシーリンクの表示を更新
 function updatePrivacyLinkDisplay() {
     const privacyLinkFooter = document.getElementById('privacyLinkFooter');
     const privacyLinkInSettings = document.getElementById('privacyLinkInSettings');
@@ -479,7 +669,6 @@ function updatePrivacyLinkDisplay() {
     }
 }
 
-// アプリを初期化
 initializeApp();
 
 // Cookie管理関数
@@ -546,7 +735,6 @@ function stopRotation() {
     }, 600);
 }
 
-// 保存されたテーマとカラーを読み込み
 let savedTheme = getCookie('theme') || 
                   (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
 let savedAccent = getCookie('accent') || 'mono';
@@ -559,7 +747,6 @@ if (document.body) {
     document.body.setAttribute('data-accent', savedAccent);
 }
 
-// 展開/折りたたみボタンの表示制御
 function updateExpandButtonVisibility() {
     const expandable = document.getElementById('colorOptionsExpandable');
     const expandBtn = document.getElementById('expandColorsBtn');
@@ -579,9 +766,6 @@ function updateExpandButtonVisibility() {
     }
 }
 
-window.addEventListener('resize', updateExpandButtonVisibility);
-
-// アクティブなボタンを更新
 function updateActiveButtons() {
     const body = document.body;
     if (!body) return;
@@ -610,7 +794,6 @@ window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e)
     }
 });
 
-// ファイルサイズの表示更新
 function updateSizeDisplay() {
     const fileSizeInput = document.getElementById('fileSize');
     const sizeUnitSelect = document.getElementById('sizeUnit');
@@ -655,7 +838,6 @@ function updateSizeDisplay() {
     sizeDisplay.textContent = displays.join(' ');
 }
 
-// エンターキー処理関数
 function handleEnterKey() {
     const fileSizeInput = document.getElementById('fileSize');
     const speedInput = document.getElementById('speed');
@@ -683,7 +865,6 @@ function handleEnterKey() {
     calculateDownloadTime();
 }
 
-// JST時刻の更新
 function updateJSTTime() {
     const jstTimeElement = document.getElementById('jstTime');
     if (!jstTimeElement) return;
