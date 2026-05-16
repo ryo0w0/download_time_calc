@@ -835,6 +835,11 @@ select:focus {
     animation: fadeIn 0.3s ease;
 }
 
+/* スタックモード：履歴ブロック全体を計算カードから離す */
+#historyBlock {
+    margin-top: 20px;
+}
+
 .history-header {
     display: flex;
     justify-content: space-between;
@@ -1549,6 +1554,11 @@ body[data-theme="light"] .toggle-switch input:checked + .toggle-slider:before {
     .history {
         margin-top: 18px;
         padding: 18px;
+    }
+
+    /* スタックモード：モバイルでの履歴ブロックの上マージンを調整 */
+    #historyBlock {
+        margin-top: 16px;
     }
 
     .history-header h3 {
