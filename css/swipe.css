@@ -1,34 +1,51 @@
 /* ===== モバイル スワイプ履歴レイアウト (768px未満) ===== */
 @media (max-width: 767px) {
-    /* スワイプコンテナ: オーバーフロー隐す */
+    /*
+     * body の padding をスワイプ時に打ち消す。
+     * スワイプコンテナは viewport 幅いっぱいに広げ、
+     * 各ページ内側に padding を持たせることでカードが見切れるのを防ぐ。
+     */
+    body {
+        padding-left: 0;
+        padding-right: 0;
+        /* 上下 padding はそのまま維持 */
+    }
+
+    /* .container はページ内 padding で制御するため幅制限を解除 */
+    .container {
+        max-width: 100%;
+    }
+
+    /* スワイプコンテナ: viewport 幅いっぱいに展開、はみ出しを隠す */
     .swipe-container {
         overflow: hidden;
         position: relative;
-        width: 100%;
+        width: 100vw;
+        /* body の左右 padding 分だけ左にオフセットして viewport 端に揃える */
+        margin-left: calc(-1 * var(--swipe-body-px, 20px));
+        margin-right: calc(-1 * var(--swipe-body-px, 20px));
     }
 
-    /*
-     * トラック: 各ページを横並び
-     * ページ幅 = コンテナ幅 + gap分。
-     * translateX はコンテナ幅基準なので、JS側は小数点パーセントで作動する。
-     * ページ間に見えるスペースは次ページの padding-left で実現。
-     */
+    /* トラック: 各ページを横並び */
     .swipe-track {
         display: flex;
         width: 100%;
         will-change: transform;
     }
 
-    /* 各ページ: 必ずコンテナ幅 100% を占有させる */
+    /* 各ページ: viewport 幅 100% を占有 */
     .swipe-page {
         flex: 0 0 100%;
         min-width: 100%;
         box-sizing: border-box;
+        /* 左右に padding を持たせてカードが端に張り付かないようにする */
+        padding-left: var(--swipe-body-px, 20px);
+        padding-right: var(--swipe-body-px, 20px);
     }
 
-    /* 2ページ目（履歴ページ）の左に 16px のスペースを作る */
+    /* 2ページ目（履歴ページ）のページ間隙間 */
     .swipe-page:nth-child(2) {
-        padding-left: 16px;
+        padding-left: calc(var(--swipe-body-px, 20px) + 8px);
     }
 
     /* 履歴ブロックをスワイプページ内でカードと同スタイルに */
