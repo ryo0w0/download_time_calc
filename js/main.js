@@ -46,14 +46,13 @@ let historyStyle = getCookie('historyStyle') || 'swipe';
 let swipeCurrentPage = 0; // 0=入力, 1=履歴
 
 function applyHistoryStyle() {
-    if (!isMobile()) return; // デスクトップは何もしない
+    if (!isMobile()) return;
 
     const container = document.querySelector('.container');
     if (!container) return;
 
     const history = getHistory();
 
-    // 履歴がない or 無効時はスワイプ構造を解除
     if (!historyEnabled || history.length === 0) {
         destroySwipeContainer();
         return;
@@ -72,26 +71,22 @@ function buildSwipeContainer() {
     const container = document.querySelector('.container');
     if (!container) return;
 
-    // 既にスワイプコンテナ構築済みならスキップ
     if (container.classList.contains('swipe-ready')) return;
 
     const card = container.querySelector('.card');
     const historyBlock = document.getElementById('historyBlock');
     if (!card || !historyBlock) return;
 
-    // ラッパー構築
     const swipeContainer = document.createElement('div');
     swipeContainer.className = 'swipe-container';
 
     const swipeTrack = document.createElement('div');
     swipeTrack.className = 'swipe-track';
 
-    // page-0: 入力カード
     const page0 = document.createElement('div');
     page0.className = 'swipe-page';
     page0.appendChild(card);
 
-    // page-1: 履歴
     const page1 = document.createElement('div');
     page1.className = 'swipe-page';
     page1.appendChild(historyBlock);
@@ -102,7 +97,6 @@ function buildSwipeContainer() {
     swipeTrack.appendChild(page1);
     swipeContainer.appendChild(swipeTrack);
 
-    // ドットナビ
     const dots = document.createElement('div');
     dots.className = 'swipe-dots';
     dots.id = 'swipeDots';
@@ -127,7 +121,6 @@ function destroySwipeContainer() {
     const card = swipeContainer.querySelector('.card');
     const historyBlock = document.getElementById('historyBlock');
 
-    // DOM を元に戻す
     if (card) container.insertBefore(card, swipeContainer);
     if (historyBlock) container.insertBefore(historyBlock, swipeContainer);
 
@@ -148,8 +141,25 @@ function updateSwipePage(page, animate = true) {
 }
 
 function setupSwipeEvents(track) {
-    let startX = 0, startY = 0, isDragging = false, startedOnInput = false;
-    const THRESHOLD = 50;
+    let startX = 0;
+    let startY = 0;
+    let currentX = 0;
+    let isDragging = false;
+    let startedOnInput = false;
+    let isHorizontal = null; // null=未確定, true=横, false=縦
+    const THRESHOLD = 40;    // ページ切替の判定距離 (px)
+    const TOTAL_PAGES = 2;
+
+    function getBaseOffset() {
+        return -swipeCurrentPage * 100; // %単位のベースオフセット
+    }
+
+    function setTrackX(pct, withTransition = false) {
+        track.style.transition = withTransition
+            ? 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+            : 'none';
+        track.style.transform = `translateX(${pct}%)`;
+    }
 
     track.addEventListener('touchstart', (e) => {
         const el = e.target;
@@ -158,24 +168,94 @@ function setupSwipeEvents(track) {
             return;
         }
         startedOnInput = false;
+        isHorizontal = null;
         startX = e.touches[0].clientX;
         startY = e.touches[0].clientY;
+        currentX = startX;
         isDragging = true;
+
+        // ドラッグ開始時はトランジション無効化して即応
+        track.style.transition = 'none';
+    }, { passive: true });
+
+    track.addEventListener('touchmove', (e) => {
+        if (!isDragging || startedOnInput) return;
+
+        const dx = e.touches[0].clientX - startX;
+        const dy = e.touches[0].clientY - startY;
+
+        // 方向が未確定なら判定する
+        if (isHorizontal === null) {
+            if (Math.abs(dx) < 5 && Math.abs(dy) < 5) return; // まだ判定しない
+            isHorizontal = Math.abs(dx) > Math.abs(dy);
+        }
+
+        // 縦スクロールと判定されたら何もしない
+        if (!isHorizontal) return;
+
+        currentX = e.touches[0].clientX;
+        const trackWidth = track.parentElement.offsetWidth;
+        if (trackWidth === 0) return;
+
+        // 指の移動量をパーセンテージに変換
+        const dragPct = ((currentX - startX) / trackWidth) * 100;
+        const basePct = getBaseOffset();
+        let newPct = basePct + dragPct;
+
+        // 端でゴムバンド抵抗: 範囲外は 1/3 の動きに
+        const minPct = -(TOTAL_PAGES - 1) * 100;
+        const maxPct = 0;
+        if (newPct > maxPct) {
+            newPct = (newPct - maxPct) / 3 + maxPct;
+        } else if (newPct < minPct) {
+            newPct = (newPct - minPct) / 3 + minPct;
+        }
+
+        setTrackX(newPct);
     }, { passive: true });
 
     track.addEventListener('touchend', (e) => {
-        if (!isDragging || startedOnInput) return;
+        if (!isDragging || startedOnInput) {
+            isDragging = false;
+            return;
+        }
         isDragging = false;
+
+        if (!isHorizontal) return;
+
+        const trackWidth = track.parentElement.offsetWidth;
         const dx = e.changedTouches[0].clientX - startX;
         const dy = e.changedTouches[0].clientY - startY;
 
-        if (Math.abs(dy) > Math.abs(dx)) return;
-
-        if (dx < -THRESHOLD && swipeCurrentPage === 0) {
-            updateSwipePage(1);
-        } else if (dx > THRESHOLD && swipeCurrentPage === 1) {
-            updateSwipePage(0);
+        // 縦方向が大きければページ切替しない
+        if (Math.abs(dy) > Math.abs(dx)) {
+            setTrackX(getBaseOffset(), true);
+            return;
         }
+
+        if (dx < -THRESHOLD && swipeCurrentPage < TOTAL_PAGES - 1) {
+            // 右→左: 次ページへ
+            swipeCurrentPage++;
+        } else if (dx > THRESHOLD && swipeCurrentPage > 0) {
+            // 左→右: 前ページへ
+            swipeCurrentPage--;
+        }
+        // THRESHOLDに届かなければ現在ページに戻す
+
+        // トランジション付きでスナップ
+        track.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+        track.style.transform = `translateX(${getBaseOffset()}%)`;
+
+        document.querySelectorAll('.swipe-dot').forEach((dot, i) => {
+            dot.classList.toggle('active', i === swipeCurrentPage);
+        });
+    }, { passive: true });
+
+    // touchcancel: 中断時も現在ページにスナップ
+    track.addEventListener('touchcancel', () => {
+        if (!isDragging) return;
+        isDragging = false;
+        setTrackX(getBaseOffset(), true);
     }, { passive: true });
 }
 
@@ -295,7 +375,6 @@ function setupAllEventListeners() {
         });
     });
 
-    // 履歴表示スタイル切り替え
     document.querySelectorAll('.option-btn[data-history-style]').forEach(btn => {
         btn.addEventListener('click', () => {
             historyStyle = btn.getAttribute('data-history-style');
@@ -367,7 +446,6 @@ function setupAllEventListeners() {
         });
     }
     
-    // リサイズ時にレイアウト再適用
     window.addEventListener('resize', () => {
         updateExpandButtonVisibility();
         if (!isMobile()) {
@@ -389,7 +467,6 @@ function setupAllEventListeners() {
     updateHistoryDisplay();
 }
 
-// 履歴スタイルボタンのアクティブ状態更新
 function updateHistoryStyleButtons() {
     document.querySelectorAll('.option-btn[data-history-style]').forEach(btn => {
         btn.classList.toggle('active', btn.getAttribute('data-history-style') === historyStyle);
@@ -400,7 +477,6 @@ function updateHistoryStyleButtons() {
     }
 }
 
-// 履歴機能（localStorage を使用）
 function getHistory() {
     try {
         const data = localStorage.getItem('calculationHistory');
@@ -531,7 +607,6 @@ function updateHistoryDisplay() {
         historyList.appendChild(historyItem);
     });
 
-    // モバイルの場合はスワイプ構造を適用
     if (isMobile()) {
         applyHistoryStyle();
     } else {
@@ -539,7 +614,6 @@ function updateHistoryDisplay() {
     }
 }
 
-// 言語切り替えボタンの設定
 function setupLanguageButtons() {
     document.querySelectorAll('.lang-btn').forEach(btn => {
         btn.addEventListener('click', () => {
