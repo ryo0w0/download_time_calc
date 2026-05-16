@@ -45,6 +45,17 @@ let historyStyle = getCookie('historyStyle') || 'swipe';
 // スワイプ状態
 let swipeCurrentPage = 0; // 0=入力, 1=履歴
 
+// デスクトップ2カラム制御: data-history-visible属性をcontainerに付与
+function setDesktopHistoryVisible(visible) {
+    const container = document.querySelector('.container');
+    if (!container) return;
+    if (visible) {
+        container.setAttribute('data-history-visible', 'true');
+    } else {
+        container.removeAttribute('data-history-visible');
+    }
+}
+
 function applyHistoryStyle() {
     if (!isMobile()) return;
 
@@ -531,8 +542,7 @@ function saveHistory(history) {
     try {
         localStorage.setItem('calculationHistory', JSON.stringify(history));
     } catch (e) {
-        console.error('履歴の保存に失敗しました:', e);
-    }
+        console.error('履歴の保存に失敗しました:', e);\n    }
 }
 
 function addToHistory(calculation) {
@@ -594,7 +604,10 @@ function deleteHistoryItem(index) {
     let history = getHistory();
     history.splice(index, 1);
     saveHistory(history);
-    if (history.length === 0) destroySwipeContainer();
+    if (history.length === 0) {
+        destroySwipeContainer();
+        setDesktopHistoryVisible(false);
+    }
     updateHistoryDisplay();
 }
 
@@ -606,6 +619,7 @@ function updateHistoryDisplay() {
     
     if (!historyEnabled) {
         historyBlock.style.display = 'none';
+        setDesktopHistoryVisible(false);
         return;
     }
     
@@ -613,6 +627,7 @@ function updateHistoryDisplay() {
     
     if (history.length === 0) {
         historyBlock.style.display = 'none';
+        setDesktopHistoryVisible(false);
         return;
     }
     
@@ -651,6 +666,7 @@ function updateHistoryDisplay() {
         applyHistoryStyle();
     } else {
         historyBlock.style.display = 'block';
+        setDesktopHistoryVisible(true);
     }
 }
 
