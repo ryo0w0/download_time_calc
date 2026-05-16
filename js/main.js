@@ -647,7 +647,7 @@ function updateLanguage(lang) {
     } else {
         document.querySelectorAll('.theme-text-light, .theme-text-dark, .theme-text-gray').forEach(el => el.style.display = 'inline');
         document.querySelectorAll('.color-text-blue, .color-text-green, .color-text-purple, .color-text-orange, .color-text-red, .color-text-mono, .color-text-pastel-blue, .color-text-pastel-green, .color-text-pastel-yellow, .color-text-pastel-pink, .color-text-pink').forEach(el => el.style.display = 'inline');
-        document.querySelectorAll('.theme-text-en, .color-text-en').forEach(el => el.style.display = 'none';
+        document.querySelectorAll('.theme-text-en, .color-text-en').forEach(el => el.style.display = 'none');
         document.querySelectorAll('.btn-text-ja').forEach(el => el.style.display = 'inline');
         document.querySelectorAll('.btn-text-en').forEach(el => el.style.display = 'none');
     }
