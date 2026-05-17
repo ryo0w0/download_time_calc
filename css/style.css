@@ -4,19 +4,7 @@
     box-sizing: border-box;
 }
 
-/* ボタンタップ時の輝くアニメーション */
-@keyframes button-glow {
-    0% {
-        box-shadow: 0 0 0 0 var(--accent);
-    }
-    50% {
-        box-shadow: 0 0 20px 4px var(--accent);
-    }
-    100% {
-        box-shadow: 0 0 0 0 var(--accent);
-    }
-}
-
+/* ボタンタップ時の押し込みアニメーション */
 @keyframes button-press {
     0% {
         transform: scale(1);
@@ -565,7 +553,7 @@ h1 {
     font-size: 11px;
     cursor: pointer;
     color: var(--text-secondary);
-    transition: all 0.2s ease;
+    transition: color 0.2s ease, background-color 0.2s ease, transform 0.15s ease, box-shadow 0.15s ease;
     font-weight: 500;
     white-space: nowrap;
     touch-action: manipulation;
@@ -604,9 +592,16 @@ h1 {
     color: white;
 }
 
+/* タッチ・クリック共通のアクティブ状態: transformのみ、animationなし */
 .lang-btn:active {
     transform: scale(0.9);
-    animation: button-glow 0.3s ease-out;
+    box-shadow: 0 0 8px var(--accent);
+}
+
+/* active状態でも選択済みスタイルは維持 */
+.lang-btn.active:active {
+    transform: scale(0.9);
+    box-shadow: 0 0 8px var(--accent);
 }
 
 @keyframes rotate {
@@ -625,7 +620,7 @@ h1 {
     cursor: pointer;
     padding: 6px;
     border-radius: 50%;
-    transition: background-color 0.2s ease, transform 0.6s ease-out;
+    transition: background-color 0.2s ease, box-shadow 0.15s ease;
     flex-shrink: 0;
     line-height: 1;
     box-shadow: 0 2px 8px var(--shadow);
@@ -654,19 +649,15 @@ h1 {
     }
 }
 
-.settings-btn {
-    transform: rotate(0deg);
-}
-
 @media (hover: hover) {
     .settings-btn:hover {
         background-color: var(--bg-secondary);
     }
 }
 
+/* settings-btnのtransformはJS側で制御するためCSSのactiveは box-shadowのみ */
 .settings-btn:active {
-    transform: scale(0.9) rotate(45deg);
-    animation: button-glow 0.3s ease-out;
+    box-shadow: 0 0 12px var(--accent);
 }
 
 .form-group {
@@ -747,7 +738,7 @@ select:focus {
     letter-spacing: 1px;
     position: relative;
     z-index: 1;
-    transition: background-color 0.2s ease, transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition: background-color 0.2s ease, transform 0.15s ease, box-shadow 0.15s ease;
     box-shadow: none;
     touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
@@ -782,7 +773,7 @@ select:focus {
 
 .calculate-btn:active {
     transform: scale(0.97);
-    animation: button-glow 0.4s ease-out;
+    box-shadow: 0 0 16px var(--accent);
 }
 
 .calculate-btn:active::before {
@@ -871,7 +862,7 @@ select:focus {
     color: var(--text-secondary);
     padding: 4px 8px;
     border-radius: 6px;
-    transition: background-color 0.2s ease, color 0.2s ease;
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.15s ease, box-shadow 0.15s ease;
     touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
     min-width: 44px;
@@ -890,7 +881,7 @@ select:focus {
 
 .clear-history-btn:active {
     transform: scale(0.9);
-    animation: button-glow 0.3s ease-out;
+    box-shadow: 0 0 8px var(--accent);
 }
 
 .history-list {
@@ -940,7 +931,7 @@ select:focus {
     cursor: pointer;
     padding: 4px 8px;
     border-radius: 4px;
-    transition: background-color 0.2s ease, color 0.2s ease;
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.15s ease, box-shadow 0.15s ease;
     flex-shrink: 0;
     width: 44px;
     height: 44px;
@@ -960,7 +951,7 @@ select:focus {
 
 .delete-history-item-btn:active {
     transform: scale(0.85);
-    animation: button-glow 0.3s ease-out;
+    box-shadow: 0 0 8px var(--accent);
 }
 
 .history-item-row {
@@ -1135,6 +1126,7 @@ body[data-theme="light"] .toggle-switch input:checked + .toggle-slider:before {
     border-radius: 50%;
     touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
+    transition: color 0.2s ease, transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 @media (hover: hover) {
@@ -1146,6 +1138,7 @@ body[data-theme="light"] .toggle-switch input:checked + .toggle-slider:before {
 .close-btn:active {
     transform: scale(0.9);
     color: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
 }
 
 .save-btn {
@@ -1157,7 +1150,7 @@ body[data-theme="light"] .toggle-switch input:checked + .toggle-slider:before {
     font-size: 14px;
     font-weight: 500;
     cursor: pointer;
-    transition: background-color 0.2s ease, transform 0.1s ease;
+    transition: background-color 0.2s ease, transform 0.15s ease, box-shadow 0.15s ease;
     margin-left: 12px;
     touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
@@ -1173,7 +1166,7 @@ body[data-theme="light"] .toggle-switch input:checked + .toggle-slider:before {
 
 .save-btn:active {
     transform: scale(0.95);
-    animation: button-glow 0.3s ease-out;
+    box-shadow: 0 0 10px var(--accent);
 }
 
 @media (max-width: 480px) {
@@ -1208,7 +1201,7 @@ body[data-theme="light"] .toggle-switch input:checked + .toggle-slider:before {
     background-color: var(--bg-secondary);
     color: var(--text-primary);
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: border-color 0.2s ease, background-color 0.2s ease, transform 0.15s ease, box-shadow 0.15s ease;
     font-size: 14px;
     text-align: center;
     touch-action: manipulation;
@@ -1224,13 +1217,19 @@ body[data-theme="light"] .toggle-switch input:checked + .toggle-slider:before {
 
 .option-btn:active {
     transform: scale(0.95);
-    animation: button-glow 0.3s ease-out;
+    box-shadow: 0 0 10px var(--accent);
 }
 
 .option-btn.active {
     background-color: var(--accent);
     color: var(--accent-text, white);
     border-color: var(--accent);
+}
+
+/* active状態でも押し込みは発動する */
+.option-btn.active:active {
+    transform: scale(0.95);
+    box-shadow: 0 0 10px var(--accent);
 }
 
 .color-preview {
@@ -1265,7 +1264,7 @@ body[data-theme="light"] .toggle-switch input:checked + .toggle-slider:before {
     background-color: var(--bg-secondary);
     color: var(--text-primary);
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: border-color 0.3s ease, background-color 0.3s ease, transform 0.15s ease, box-shadow 0.15s ease;
     font-size: 14px;
     text-align: center;
     margin-top: 8px;
@@ -1305,7 +1304,7 @@ body[data-theme="light"] .toggle-switch input:checked + .toggle-slider:before {
 
 .expand-btn:active {
     transform: scale(0.95);
-    animation: button-glow 0.3s ease-out;
+    box-shadow: 0 0 10px var(--accent);
 }
 
 @media (min-width: 481px) {
@@ -1370,7 +1369,7 @@ body[data-theme="light"] .toggle-switch input:checked + .toggle-slider:before {
     left: 20px;
     color: var(--text-secondary);
     text-decoration: none;
-    transition: color 0.2s ease;
+    transition: color 0.2s ease, transform 0.15s ease, box-shadow 0.15s ease;
     font-size: 11px;
     background-color: var(--bg-card);
     padding: 6px 10px;
@@ -1387,7 +1386,7 @@ body[data-theme="light"] .toggle-switch input:checked + .toggle-slider:before {
 
 .privacy-link-bottom-left:active {
     transform: scale(0.95);
-    animation: button-glow 0.3s ease-out;
+    box-shadow: 0 0 8px var(--accent);
 }
 
 @media (max-width: 480px) {
@@ -1406,7 +1405,7 @@ body[data-theme="light"] .toggle-switch input:checked + .toggle-slider:before {
     padding: 12px 16px;
     border-radius: 8px;
     background-color: var(--bg-secondary);
-    transition: all 0.2s ease;
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.15s ease, box-shadow 0.15s ease;
     text-align: center;
     font-weight: 500;
     touch-action: manipulation;
@@ -1426,7 +1425,7 @@ body[data-theme="light"] .toggle-switch input:checked + .toggle-slider:before {
 
 .privacy-link-settings:active {
     transform: scale(0.95);
-    animation: button-glow 0.3s ease-out;
+    box-shadow: 0 0 10px var(--accent);
 }
 
 .floating-close-btn {
@@ -1446,7 +1445,7 @@ body[data-theme="light"] .toggle-switch input:checked + .toggle-slider:before {
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s ease;
+    transition: background-color 0.2s ease, transform 0.15s ease, box-shadow 0.15s ease;
     line-height: 1;
     padding: 0;
     touch-action: manipulation;
@@ -1455,7 +1454,7 @@ body[data-theme="light"] .toggle-switch input:checked + .toggle-slider:before {
 
 .floating-close-btn:active {
     transform: scale(0.9);
-    animation: button-glow 0.3s ease-out;
+    box-shadow: 0 0 12px var(--accent);
 }
 
 @media (min-width: 481px) {
@@ -1700,4 +1699,45 @@ body[data-theme="light"] .toggle-switch input:checked + .toggle-slider:before {
         font-size: 10px;
         padding: 6px 10px;
     }
+}
+
+/* スワイプUI */
+.swipe-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    overflow: hidden;
+}
+
+.swipe-track {
+    display: flex;
+    width: 100%;
+    will-change: transform;
+}
+
+.swipe-page {
+    flex: 0 0 100%;
+    width: 100%;
+    min-width: 0;
+}
+
+.swipe-dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 0 4px;
+}
+
+.swipe-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--border);
+    transition: background-color 0.25s ease, transform 0.25s ease;
+    display: inline-block;
+}
+
+.swipe-dot.active {
+    background-color: var(--accent);
+    transform: scale(1.3);
 }
