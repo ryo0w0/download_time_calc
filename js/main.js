@@ -42,6 +42,9 @@ function isMobile() {
 // 履歴表示スタイル (swipe / stack)
 let historyStyle = getCookie('historyStyle') || 'swipe';
 
+// デスクトップ履歴スタイル (column / stack)
+let desktopHistoryStyle = getCookie('desktopHistoryStyle') || 'column';
+
 // スワイプ状態
 let swipeCurrentPage = 0; // 0=入力, 1=履歴
 
@@ -53,6 +56,23 @@ function setDesktopHistoryVisible(visible) {
         container.setAttribute('data-history-visible', 'true');
     } else {
         container.removeAttribute('data-history-visible');
+    }
+}
+
+// デスクトップ履歴スタイル切り替え
+function applyDesktopHistoryStyle() {
+    const container = document.querySelector('.container');
+    if (!container) return;
+
+    if (desktopHistoryStyle === 'stack') {
+        container.setAttribute('data-history-stack', 'true');
+        container.removeAttribute('data-history-visible');
+    } else {
+        container.removeAttribute('data-history-stack');
+        const history = getHistory();
+        if (historyEnabled && history.length > 0) {
+            container.setAttribute('data-history-visible', 'true');
+        }
     }
 }
 
@@ -414,12 +434,23 @@ function setupAllEventListeners() {
         });
     });
 
+    // モバイル用履歴スタイル切り替え
     document.querySelectorAll('.option-btn[data-history-style]').forEach(btn => {
         btn.addEventListener('click', () => {
             historyStyle = btn.getAttribute('data-history-style');
             setCookie('historyStyle', historyStyle);
             updateHistoryStyleButtons();
             destroySwipeContainer();
+            updateHistoryDisplay();
+        });
+    });
+
+    // デスクトップ用履歴スタイル切り替え
+    document.querySelectorAll('.option-btn[data-desktop-history-style]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            desktopHistoryStyle = btn.getAttribute('data-desktop-history-style');
+            setCookie('desktopHistoryStyle', desktopHistoryStyle);
+            updateHistoryStyleButtons();
             updateHistoryDisplay();
         });
     });
@@ -487,8 +518,10 @@ function setupAllEventListeners() {
     
     window.addEventListener('resize', () => {
         updateExpandButtonVisibility();
+        updateHistoryStyleButtons();
         if (!isMobile()) {
             destroySwipeContainer();
+            updateHistoryDisplay();
         } else {
             const hist = getHistory();
             if (historyEnabled && hist.length > 0 && historyStyle === 'swipe') {
@@ -507,12 +540,22 @@ function setupAllEventListeners() {
 }
 
 function updateHistoryStyleButtons() {
+    // モバイル用
     document.querySelectorAll('.option-btn[data-history-style]').forEach(btn => {
         btn.classList.toggle('active', btn.getAttribute('data-history-style') === historyStyle);
     });
-    const section = document.getElementById('historyStyleSection');
-    if (section) {
-        section.style.display = isMobile() ? 'block' : 'none';
+    const mobileSection = document.getElementById('historyStyleSection');
+    if (mobileSection) {
+        mobileSection.style.display = isMobile() ? 'block' : 'none';
+    }
+
+    // デスクトップ用
+    document.querySelectorAll('.option-btn[data-desktop-history-style]').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-desktop-history-style') === desktopHistoryStyle);
+    });
+    const desktopSection = document.getElementById('desktopHistoryStyleSection');
+    if (desktopSection) {
+        desktopSection.style.display = isMobile() ? 'none' : 'block';
     }
 }
 
@@ -596,6 +639,8 @@ function deleteHistoryItem(index) {
     if (history.length === 0) {
         destroySwipeContainer();
         setDesktopHistoryVisible(false);
+        const container = document.querySelector('.container');
+        if (container) container.removeAttribute('data-history-stack');
     }
     updateHistoryDisplay();
 }
@@ -609,6 +654,8 @@ function updateHistoryDisplay() {
     if (!historyEnabled) {
         historyBlock.style.display = 'none';
         setDesktopHistoryVisible(false);
+        const container = document.querySelector('.container');
+        if (container) container.removeAttribute('data-history-stack');
         return;
     }
     
@@ -617,6 +664,8 @@ function updateHistoryDisplay() {
     if (history.length === 0) {
         historyBlock.style.display = 'none';
         setDesktopHistoryVisible(false);
+        const container = document.querySelector('.container');
+        if (container) container.removeAttribute('data-history-stack');
         return;
     }
     
@@ -655,7 +704,7 @@ function updateHistoryDisplay() {
         applyHistoryStyle();
     } else {
         historyBlock.style.display = 'block';
-        setDesktopHistoryVisible(true);
+        applyDesktopHistoryStyle();
     }
 }
 
@@ -708,12 +757,16 @@ function updateLanguage(lang) {
     if (historyStyleTitle) historyStyleTitle.textContent = t.historyStyleTitle;
     const swipeBtn = document.getElementById('historyStyleSwipeBtn');
     const stackBtn = document.getElementById('historyStyleStackBtn');
-    if (swipeBtn) {
-        swipeBtn.querySelector('.btn-text-ja').textContent = t.historyStyleSwipe;
-    }
-    if (stackBtn) {
-        stackBtn.querySelector('.btn-text-ja').textContent = t.historyStyleStack;
-    }
+    if (swipeBtn) swipeBtn.querySelector('.btn-text-ja').textContent = t.historyStyleSwipe;
+    if (stackBtn) stackBtn.querySelector('.btn-text-ja').textContent = t.historyStyleStack;
+
+    // デスクトップ用翻訳
+    const desktopHistoryStyleTitle = document.getElementById('desktopHistoryStyleTitle');
+    if (desktopHistoryStyleTitle) desktopHistoryStyleTitle.textContent = t.historyStyleTitle;
+    const desktopColumnBtn = document.getElementById('desktopHistoryStyleColumnBtn');
+    const desktopStackBtn = document.getElementById('desktopHistoryStyleStackBtn');
+    if (desktopColumnBtn) desktopColumnBtn.querySelector('.btn-text-ja').textContent = t.desktopHistoryStyleColumn || '2カラム';
+    if (desktopStackBtn) desktopStackBtn.querySelector('.btn-text-ja').textContent = t.desktopHistoryStyleStack || '下に積み上げ';
     
     const privacyLinkToggleLabel = document.getElementById('privacyLinkToggleLabel');
     const privacyLinkToggleDescription = document.getElementById('privacyLinkToggleDescription');
@@ -767,7 +820,7 @@ function updateLanguage(lang) {
         document.querySelectorAll('.theme-text-light, .theme-text-dark, .theme-text-gray').forEach(el => el.style.display = 'inline');
         document.querySelectorAll('.color-text-blue, .color-text-green, .color-text-purple, .color-text-orange, .color-text-red, .color-text-mono, .color-text-pastel-blue, .color-text-pastel-green, .color-text-pastel-yellow, .color-text-pastel-pink, .color-text-pink').forEach(el => el.style.display = 'inline');
         document.querySelectorAll('.theme-text-en, .color-text-en').forEach(el => el.style.display = 'none');
-        document.querySelectorAll('.btn-text-ja').forEach(el => el.style.display = 'inline');
+        document.querySelectorAll('.btn-text-ja').forEach(el => el.style.display = 'inline';
         document.querySelectorAll('.btn-text-en').forEach(el => el.style.display = 'none');
     }
 
