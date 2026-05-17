@@ -19,6 +19,8 @@
     "historyStyleTitle": "履歴の表示スタイル",
     "historyStyleSwipe": "スワイプ切り替え",
     "historyStyleStack": "下に積み上げ",
+    "desktopHistoryStyleColumn": "2カラム",
+    "desktopHistoryStyleStack": "下に積み上げ",
     "privacyLinkToggleTitle": "プライバシーポリシー",
     "privacyLinkToggleDescription": "フッターにプライバシーポリシーリンクを表示",
     "privacyPolicy": "プライバシーポリシー",

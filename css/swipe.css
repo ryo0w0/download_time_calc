@@ -39,7 +39,7 @@
         padding-right: var(--swipe-body-px, 20px);
     }
 
-    /* 2ページ目（履歴）: ページ間に少し追加の限内間隙 */
+    /* 2ページ目（履歴）: ページ間に少し追加の内側余白 */
     .swipe-page:nth-child(2) {
         padding-left: calc(var(--swipe-body-px, 20px) + 8px);
     }
@@ -73,14 +73,13 @@
     }
 }
 
-/* デスクトップではスワイプUI非表示 (念のため) */
+/* デスクトップではスワイプUI非表示
+   修正: display:contents は overflow:hidden の親に悪影響があるため
+         display:none に統一 */
 @media (min-width: 768px) {
     .swipe-container,
     .swipe-track,
     .swipe-page,
-    .swipe-dots {
-        display: contents;
-    }
     .swipe-dots {
         display: none !important;
     }

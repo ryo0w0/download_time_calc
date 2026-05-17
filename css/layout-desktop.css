@@ -61,9 +61,11 @@
         margin-top: 16px;
     }
 
-    /* ── 共通: 履歴カードスタイル ── */
-    #historyBlock > .history {
-        margin-top: 0;
+    /* ── 共通: 履歴ブロック自体のカードスタイル ── */
+    /* 修正: #historyBlock 自体が .history クラスを持つ要素のため
+             誤った子セレクタ「#historyBlock > .history」を
+             「#historyBlock」に修正 */
+    #historyBlock {
         border-radius: 16px;
         box-shadow: 0 4px 20px var(--shadow);
         background-color: var(--bg-card);
@@ -71,7 +73,7 @@
     }
 
     /* 2カラム時のみ最大高さ + スクロール */
-    .container[data-history-visible="true"] #historyBlock > .history {
+    .container[data-history-visible="true"] #historyBlock {
         max-height: calc(100dvh - calc(var(--sticky-top) * 2));
         overflow-y: auto;
     }

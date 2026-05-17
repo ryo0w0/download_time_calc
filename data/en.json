@@ -19,6 +19,8 @@
     "historyStyleTitle": "History Display Style",
     "historyStyleSwipe": "Swipe",
     "historyStyleStack": "Stack",
+    "desktopHistoryStyleColumn": "2 Column",
+    "desktopHistoryStyleStack": "Stack",
     "privacyLinkToggleTitle": "Privacy Policy",
     "privacyLinkToggleDescription": "Show privacy policy link in footer",
     "privacyPolicy": "Privacy Policy",

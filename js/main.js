@@ -765,8 +765,8 @@ function updateLanguage(lang) {
     if (desktopHistoryStyleTitle) desktopHistoryStyleTitle.textContent = t.historyStyleTitle;
     const desktopColumnBtn = document.getElementById('desktopHistoryStyleColumnBtn');
     const desktopStackBtn = document.getElementById('desktopHistoryStyleStackBtn');
-    if (desktopColumnBtn) desktopColumnBtn.querySelector('.btn-text-ja').textContent = t.desktopHistoryStyleColumn || '2カラム';
-    if (desktopStackBtn) desktopStackBtn.querySelector('.btn-text-ja').textContent = t.desktopHistoryStyleStack || '下に積み上げ';
+    if (desktopColumnBtn) desktopColumnBtn.querySelector('.btn-text-ja').textContent = t.desktopHistoryStyleColumn;
+    if (desktopStackBtn) desktopStackBtn.querySelector('.btn-text-ja').textContent = t.desktopHistoryStyleStack;
     
     const privacyLinkToggleLabel = document.getElementById('privacyLinkToggleLabel');
     const privacyLinkToggleDescription = document.getElementById('privacyLinkToggleDescription');
@@ -820,7 +820,7 @@ function updateLanguage(lang) {
         document.querySelectorAll('.theme-text-light, .theme-text-dark, .theme-text-gray').forEach(el => el.style.display = 'inline');
         document.querySelectorAll('.color-text-blue, .color-text-green, .color-text-purple, .color-text-orange, .color-text-red, .color-text-mono, .color-text-pastel-blue, .color-text-pastel-green, .color-text-pastel-yellow, .color-text-pastel-pink, .color-text-pink').forEach(el => el.style.display = 'inline');
         document.querySelectorAll('.theme-text-en, .color-text-en').forEach(el => el.style.display = 'none');
-        document.querySelectorAll('.btn-text-ja').forEach(el => el.style.display = 'inline';
+        document.querySelectorAll('.btn-text-ja').forEach(el => el.style.display = 'inline');
         document.querySelectorAll('.btn-text-en').forEach(el => el.style.display = 'none');
     }
 
