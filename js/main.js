@@ -138,7 +138,6 @@ function destroySwipeContainer() {
     swipeContainer.remove();
     container.classList.remove('swipe-ready');
 
-    // document レベルのスワイプリスナーを解除
     teardownSwipeEvents();
 }
 
@@ -167,15 +166,14 @@ function teardownSwipeEvents() {
 }
 
 function setupSwipeEvents() {
-    // 既存リスナーがあれば先に解除
     teardownSwipeEvents();
 
     let startX = 0;
     let startY = 0;
     let currentX = 0;
     let isDragging = false;
-    let isHorizontal = null; // null=未確定, true=横, false=縦
-    const THRESHOLD = 40;    // ページ切替の判定距離 (px)
+    let isHorizontal = null;
+    const THRESHOLD = 40;
     const TOTAL_PAGES = 2;
 
     function getTrack() {
@@ -195,16 +193,11 @@ function setupSwipeEvents() {
         track.style.transform = `translateX(${pct}%)`;
     }
 
-    // スワイプを無視すべき状況か判定
     function shouldIgnore(e) {
-        // スワイプUI が存在しないとき
         if (!getTrack()) return true;
-        // モーダルが開いているとき
         if (document.getElementById('settingsModal')?.classList.contains('show')) return true;
-        // input / select / textarea にフォーカスが当たっているとき
         const active = document.activeElement;
         if (active && (active.tagName === 'INPUT' || active.tagName === 'SELECT' || active.tagName === 'TEXTAREA')) return true;
-        // タッチ開始点が input / select / button / textarea のとき
         const el = e.target;
         if (el.tagName === 'INPUT' || el.tagName === 'SELECT' || el.tagName === 'TEXTAREA') return true;
         return false;
@@ -237,7 +230,6 @@ function setupSwipeEvents() {
 
         if (!isHorizontal) return;
 
-        // 横スワイプと確定したのでページスクロールを止める
         e.preventDefault();
 
         currentX = e.touches[0].clientX;
@@ -250,7 +242,6 @@ function setupSwipeEvents() {
         const basePct = getBaseOffset();
         let newPct = basePct + dragPct;
 
-        // 端でゴムバンド抵抗
         const minPct = -(TOTAL_PAGES - 1) * 100;
         const maxPct = 0;
         if (newPct > maxPct) {
@@ -299,14 +290,11 @@ function setupSwipeEvents() {
         setTrackX(getBaseOffset(), true);
     };
 
-    // document 全体にリスナーを登録
-    // touchmove だけ passive:false（e.preventDefault() を呼ぶため）
     document.addEventListener('touchstart',  onStart,  { passive: true });
     document.addEventListener('touchmove',   onMove,   { passive: false });
     document.addEventListener('touchend',    onEnd,    { passive: true });
     document.addEventListener('touchcancel', onCancel, { passive: true });
 
-    // 後で解除できるよう参照を保持
     _swipeHandlers = { start: onStart, move: onMove, end: onEnd, cancel: onCancel };
 }
 
@@ -542,7 +530,8 @@ function saveHistory(history) {
     try {
         localStorage.setItem('calculationHistory', JSON.stringify(history));
     } catch (e) {
-        console.error('履歴の保存に失敗しました:', e);\n    }
+        console.error('履歴の保存に失敗しました:', e);
+    }
 }
 
 function addToHistory(calculation) {
