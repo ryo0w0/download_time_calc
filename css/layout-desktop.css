@@ -1,23 +1,21 @@
 /*
- * デスクトップ2カラムレイアウト
+ * デスクトップレイアウト
  * 768px以上のビューポートで有効になります
- * 左カラム: 入力フォーム + 結果（sticky固定）
- * 右カラム: 履歴（スクロール可能）
+ *
+ * デスクトップ履歴スタイル:
+ *   column (デフォルト): 2カラムグリッド、左=入力 sticky、右=履歴
+ *   stack             : 1カラム、履歴をカードの下に積み上げ
  */
 
 @media (min-width: 768px) {
 
-    /* body: 水平・垂直両方のセンタリングを維持しつつ上下に余白 */
     body {
         align-items: flex-start;
         padding-top: var(--sticky-top);
         padding-bottom: var(--sticky-top);
     }
 
-    /*
-     * コンテナ基本: 履歴なし状態
-     * - 1カラム（履歴非表示時のデフォルト）
-     */
+    /* ── デフォルト: 1カラム (履歴なし / stackスタイル) ── */
     .container {
         max-width: 520px;
         width: 100%;
@@ -25,10 +23,7 @@
         display: block;
     }
 
-    /*
-     * 履歴表示時: 2カラムグリッドに切り替え
-     * data-history-visible 属性で制御（JS側で付与・削除）
-     */
+    /* ── 2カラムスタイル (column) ── */
     .container[data-history-visible="true"] {
         max-width: 960px;
         display: grid;
@@ -38,7 +33,7 @@
     }
 
     /* 左カラム: カードをsticky固定 */
-    .container > .card {
+    .container[data-history-visible="true"] > .card {
         grid-column: 1;
         grid-row: 1;
         position: sticky;
@@ -46,24 +41,41 @@
     }
 
     /* 右カラム: 履歴ブロック */
+    .container[data-history-visible="true"] #historyBlock {
+        grid-column: 2;
+        grid-row: 1;
+        margin-top: 0;
+    }
+
+    /* ── 下積みスタイル (stack) ── */
+    .container[data-history-stack="true"] {
+        max-width: 520px;
+        display: block;
+    }
+
+    .container[data-history-stack="true"] > .card {
+        position: static;
+    }
+
+    .container[data-history-stack="true"] #historyBlock {
+        margin-top: 16px;
+    }
+
+    /* ── 共通: 履歴カードスタイル ── */
     #historyBlock > .history {
         margin-top: 0;
         border-radius: 16px;
         box-shadow: 0 4px 20px var(--shadow);
         background-color: var(--bg-card);
         padding: 24px;
+    }
+
+    /* 2カラム時のみ最大高さ + スクロール */
+    .container[data-history-visible="true"] #historyBlock > .history {
         max-height: calc(100dvh - calc(var(--sticky-top) * 2));
         overflow-y: auto;
     }
 
-    /* デスクトップでは #historyBlock 自体のマージンは不要 */
-    #historyBlock {
-        grid-column: 2;
-        grid-row: 1;
-        margin-top: 0;
-    }
-
-    /* 履歴ヘッダー */
     #historyBlock .history-header h3 {
         font-size: 18px;
         font-weight: 600;
@@ -79,17 +91,15 @@
     }
 }
 
-/* タブレット（768px〜1024px）: パディングとgapを調整 */
+/* タブレット (768px〜1024px): gapとpaddingを調整 */
 @media (min-width: 768px) and (max-width: 1024px) {
     .container[data-history-visible="true"] {
         max-width: 100%;
         padding-inline: 20px;
         gap: 16px;
-        /* タブレットでは比率を均等に近づける */
         grid-template-columns: 1fr 1fr;
     }
 
-    /* タブレットでは select の min-width を緩める */
     select {
         min-width: 100px;
     }

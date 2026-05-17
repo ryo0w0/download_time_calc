@@ -75,7 +75,7 @@
             </div>
         </div>
 
-        <!-- 履歴ブロック: デスクトップでは右カラム、モバイルではスワイプ or 下積み -->
+        <!-- 履歴ブロック: デスクトップでは右カラム or 下積み、モバイルではスワイプ or 下積み -->
         <div class="history" id="historyBlock" style="display: none;">
             <div class="history-header">
                 <h3 id="historyTitle">履歴</h3>
@@ -181,7 +181,9 @@
                 </div>
             </div>
 
-            <!-- モバイル限定: 履歴表示スタイル設定 -->
+            <!-- 履歴表示スタイル: モバイルとデスクトップで別々に表示 -->
+
+            <!-- モバイル用 -->
             <div class="setting-section mobile-only-setting" id="historyStyleSection" style="display:none;">
                 <h3 id="historyStyleTitle">履歴の表示スタイル</h3>
                 <div class="theme-options">
@@ -190,6 +192,21 @@
                         <span class="btn-text-en" style="display:none;">Swipe</span>
                     </button>
                     <button class="option-btn" data-history-style="stack" id="historyStyleStackBtn">
+                        <span class="btn-text-ja">下に積み上げ</span>
+                        <span class="btn-text-en" style="display:none;">Stack</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- デスクトップ用 -->
+            <div class="setting-section desktop-only-setting" id="desktopHistoryStyleSection" style="display:none;">
+                <h3 id="desktopHistoryStyleTitle">履歴の表示スタイル</h3>
+                <div class="theme-options">
+                    <button class="option-btn" data-desktop-history-style="column" id="desktopHistoryStyleColumnBtn">
+                        <span class="btn-text-ja">2カラム</span>
+                        <span class="btn-text-en" style="display:none;">2 Column</span>
+                    </button>
+                    <button class="option-btn" data-desktop-history-style="stack" id="desktopHistoryStyleStackBtn">
                         <span class="btn-text-ja">下に積み上げ</span>
                         <span class="btn-text-en" style="display:none;">Stack</span>
                     </button>
